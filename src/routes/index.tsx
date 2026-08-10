@@ -5,6 +5,8 @@ import { CarSearch } from "@/components/site/CarSearch";
 import { WhyChoose } from "@/components/site/WhyChoose";
 import { Services } from "@/components/site/Services";
 import { UnderOneRoof } from "@/components/site/UnderOneRoof";
+import { SellExchange } from "@/components/site/SellExchange";
+import { StickyActions } from "@/components/site/StickyActions";
 import { SiteFooter } from "@/components/site/SiteFooter";
 
 const TITLE = "Motor Wallah | Certified Pre-Owned Cars in India";

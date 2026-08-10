@@ -1,4 +1,4 @@
-import { Car, Download, IndianRupee, ShieldCheck } from "lucide-react";
+import { Car, Download, IndianRupee, Repeat, ShieldCheck } from "lucide-react";
 import heroCars from "@/assets/hero-cars.jpg";
 
 const TAGS = ["Buy", "Sell", "Exchange", "Finance", "Servicing", "More"];
@@ -50,31 +50,28 @@ export function Hero() {
               <Car className="h-4 w-4" /> Explore Cars
             </a>
             <a
-              href="#services"
+              href="#sell"
               className="inline-flex items-center gap-2 border border-ink-foreground/40 px-5 py-3 text-xs font-bold uppercase tracking-[0.1em] transition-colors hover:border-primary hover:text-primary"
             >
               <IndianRupee className="h-4 w-4" /> Sell Your Car
             </a>
             <a
-              href="#services"
-              className="inline-flex items-center gap-2 border border-ink-foreground/40 px-5 py-3 text-[0.65rem] font-bold uppercase leading-tight tracking-[0.1em] transition-colors hover:border-primary hover:text-primary"
+              href="#sell"
+              className="inline-flex items-center gap-2 border border-ink-foreground/40 px-5 py-3 text-xs font-bold uppercase tracking-[0.1em] transition-colors hover:border-primary hover:text-primary"
             >
-              <ShieldCheck className="h-4 w-4" />
-              <span>
-                Become a
-                <br />
-                Franchise Partner
-              </span>
+              <Repeat className="h-4 w-4" /> Exchange Your Car
             </a>
-            <span className="inline-flex items-center gap-2 border border-ink-foreground/40 px-5 py-3 text-[0.65rem] font-bold uppercase leading-tight tracking-[0.1em] text-ink-foreground/70">
-              <Download className="h-4 w-4" />
-              <span>
-                Download App
-                <br />
-                (Coming Soon)
-              </span>
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-ink-foreground/70">
+            <a href="#services" className="inline-flex items-center gap-2 underline-offset-4 transition-colors hover:text-primary hover:underline">
+              <ShieldCheck className="h-3.5 w-3.5 text-primary" /> Become a Franchise Partner
+            </a>
+            <span className="inline-flex items-center gap-2">
+              <Download className="h-3.5 w-3.5" /> Download App (Coming Soon)
             </span>
           </div>
+
         </div>
       </div>
     </section>
