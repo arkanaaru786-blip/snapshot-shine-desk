@@ -55,6 +55,21 @@ export function Services() {
             </button>
           ))}
         </div>
+
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <a
+            href="#services"
+            className="inline-flex items-center gap-2 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.1em] text-primary-foreground transition-transform hover:-translate-y-0.5"
+          >
+            Explore All Services
+          </a>
+          <a
+            href="tel:18001234567"
+            className="inline-flex items-center gap-2 border border-border bg-card px-6 py-3 text-xs font-bold uppercase tracking-[0.1em] transition-colors hover:border-primary hover:text-primary"
+          >
+            Book Service
+          </a>
+        </div>
       </div>
     </section>
   );

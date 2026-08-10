@@ -53,6 +53,15 @@ export function WhyChoose() {
             </div>
           ))}
         </div>
+
+        <div className="mt-10 text-center">
+          <a
+            href="#why"
+            className="inline-flex items-center gap-2 border border-border px-6 py-3 text-xs font-bold uppercase tracking-[0.1em] transition-colors hover:border-primary hover:text-primary"
+          >
+            Learn More About Us
+          </a>
+        </div>
       </div>
     </section>
   );
