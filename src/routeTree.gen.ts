@@ -10,33 +10,296 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AccessoriesRouteImport } from './routes/accessories'
+import { Route as BookServiceRouteImport } from './routes/book-service'
+import { Route as CareersRouteImport } from './routes/careers'
+import { Route as CarsRouteImport } from './routes/cars'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ExchangeRouteImport } from './routes/exchange'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as FinanceRouteImport } from './routes/finance'
+import { Route as FranchiseRouteImport } from './routes/franchise'
+import { Route as InspectionRouteImport } from './routes/inspection'
+import { Route as InsuranceRouteImport } from './routes/insurance'
+import { Route as LocationsRouteImport } from './routes/locations'
+import { Route as RoadsideAssistanceRouteImport } from './routes/roadside-assistance'
+import { Route as RtoRouteImport } from './routes/rto'
+import { Route as SellYourCarRouteImport } from './routes/sell-your-car'
+import { Route as ServicesRouteImport } from './routes/services'
+import { Route as WarrantyRouteImport } from './routes/warranty'
+import { Route as WorkshopRouteImport } from './routes/workshop'
+import { Route as FranchiseApplyRouteImport } from './routes/franchise.apply'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccessoriesRoute = AccessoriesRouteImport.update({
+  id: '/accessories',
+  path: '/accessories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookServiceRoute = BookServiceRouteImport.update({
+  id: '/book-service',
+  path: '/book-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersRoute = CareersRouteImport.update({
+  id: '/careers',
+  path: '/careers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarsRoute = CarsRouteImport.update({
+  id: '/cars',
+  path: '/cars',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExchangeRoute = ExchangeRouteImport.update({
+  id: '/exchange',
+  path: '/exchange',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FinanceRoute = FinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FranchiseRoute = FranchiseRouteImport.update({
+  id: '/franchise',
+  path: '/franchise',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InspectionRoute = InspectionRouteImport.update({
+  id: '/inspection',
+  path: '/inspection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InsuranceRoute = InsuranceRouteImport.update({
+  id: '/insurance',
+  path: '/insurance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LocationsRoute = LocationsRouteImport.update({
+  id: '/locations',
+  path: '/locations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoadsideAssistanceRoute = RoadsideAssistanceRouteImport.update({
+  id: '/roadside-assistance',
+  path: '/roadside-assistance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RtoRoute = RtoRouteImport.update({
+  id: '/rto',
+  path: '/rto',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellYourCarRoute = SellYourCarRouteImport.update({
+  id: '/sell-your-car',
+  path: '/sell-your-car',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WarrantyRoute = WarrantyRouteImport.update({
+  id: '/warranty',
+  path: '/warranty',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkshopRoute = WorkshopRouteImport.update({
+  id: '/workshop',
+  path: '/workshop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FranchiseApplyRoute = FranchiseApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => FranchiseRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/accessories': typeof AccessoriesRoute
+  '/book-service': typeof BookServiceRoute
+  '/careers': typeof CareersRoute
+  '/cars': typeof CarsRoute
+  '/contact': typeof ContactRoute
+  '/exchange': typeof ExchangeRoute
+  '/faq': typeof FaqRoute
+  '/finance': typeof FinanceRoute
+  '/franchise': typeof FranchiseRouteWithChildren
+  '/inspection': typeof InspectionRoute
+  '/insurance': typeof InsuranceRoute
+  '/locations': typeof LocationsRoute
+  '/roadside-assistance': typeof RoadsideAssistanceRoute
+  '/rto': typeof RtoRoute
+  '/sell-your-car': typeof SellYourCarRoute
+  '/services': typeof ServicesRoute
+  '/warranty': typeof WarrantyRoute
+  '/workshop': typeof WorkshopRoute
+  '/franchise/apply': typeof FranchiseApplyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/accessories': typeof AccessoriesRoute
+  '/book-service': typeof BookServiceRoute
+  '/careers': typeof CareersRoute
+  '/cars': typeof CarsRoute
+  '/contact': typeof ContactRoute
+  '/exchange': typeof ExchangeRoute
+  '/faq': typeof FaqRoute
+  '/finance': typeof FinanceRoute
+  '/franchise': typeof FranchiseRouteWithChildren
+  '/inspection': typeof InspectionRoute
+  '/insurance': typeof InsuranceRoute
+  '/locations': typeof LocationsRoute
+  '/roadside-assistance': typeof RoadsideAssistanceRoute
+  '/rto': typeof RtoRoute
+  '/sell-your-car': typeof SellYourCarRoute
+  '/services': typeof ServicesRoute
+  '/warranty': typeof WarrantyRoute
+  '/workshop': typeof WorkshopRoute
+  '/franchise/apply': typeof FranchiseApplyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/accessories': typeof AccessoriesRoute
+  '/book-service': typeof BookServiceRoute
+  '/careers': typeof CareersRoute
+  '/cars': typeof CarsRoute
+  '/contact': typeof ContactRoute
+  '/exchange': typeof ExchangeRoute
+  '/faq': typeof FaqRoute
+  '/finance': typeof FinanceRoute
+  '/franchise': typeof FranchiseRouteWithChildren
+  '/inspection': typeof InspectionRoute
+  '/insurance': typeof InsuranceRoute
+  '/locations': typeof LocationsRoute
+  '/roadside-assistance': typeof RoadsideAssistanceRoute
+  '/rto': typeof RtoRoute
+  '/sell-your-car': typeof SellYourCarRoute
+  '/services': typeof ServicesRoute
+  '/warranty': typeof WarrantyRoute
+  '/workshop': typeof WorkshopRoute
+  '/franchise/apply': typeof FranchiseApplyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/accessories'
+    | '/book-service'
+    | '/careers'
+    | '/cars'
+    | '/contact'
+    | '/exchange'
+    | '/faq'
+    | '/finance'
+    | '/franchise'
+    | '/inspection'
+    | '/insurance'
+    | '/locations'
+    | '/roadside-assistance'
+    | '/rto'
+    | '/sell-your-car'
+    | '/services'
+    | '/warranty'
+    | '/workshop'
+    | '/franchise/apply'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/accessories'
+    | '/book-service'
+    | '/careers'
+    | '/cars'
+    | '/contact'
+    | '/exchange'
+    | '/faq'
+    | '/finance'
+    | '/franchise'
+    | '/inspection'
+    | '/insurance'
+    | '/locations'
+    | '/roadside-assistance'
+    | '/rto'
+    | '/sell-your-car'
+    | '/services'
+    | '/warranty'
+    | '/workshop'
+    | '/franchise/apply'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/accessories'
+    | '/book-service'
+    | '/careers'
+    | '/cars'
+    | '/contact'
+    | '/exchange'
+    | '/faq'
+    | '/finance'
+    | '/franchise'
+    | '/inspection'
+    | '/insurance'
+    | '/locations'
+    | '/roadside-assistance'
+    | '/rto'
+    | '/sell-your-car'
+    | '/services'
+    | '/warranty'
+    | '/workshop'
+    | '/franchise/apply'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  AccessoriesRoute: typeof AccessoriesRoute
+  BookServiceRoute: typeof BookServiceRoute
+  CareersRoute: typeof CareersRoute
+  CarsRoute: typeof CarsRoute
+  ContactRoute: typeof ContactRoute
+  ExchangeRoute: typeof ExchangeRoute
+  FaqRoute: typeof FaqRoute
+  FinanceRoute: typeof FinanceRoute
+  FranchiseRoute: typeof FranchiseRouteWithChildren
+  InspectionRoute: typeof InspectionRoute
+  InsuranceRoute: typeof InsuranceRoute
+  LocationsRoute: typeof LocationsRoute
+  RoadsideAssistanceRoute: typeof RoadsideAssistanceRoute
+  RtoRoute: typeof RtoRoute
+  SellYourCarRoute: typeof SellYourCarRoute
+  ServicesRoute: typeof ServicesRoute
+  WarrantyRoute: typeof WarrantyRoute
+  WorkshopRoute: typeof WorkshopRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +311,183 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accessories': {
+      id: '/accessories'
+      path: '/accessories'
+      fullPath: '/accessories'
+      preLoaderRoute: typeof AccessoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book-service': {
+      id: '/book-service'
+      path: '/book-service'
+      fullPath: '/book-service'
+      preLoaderRoute: typeof BookServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers': {
+      id: '/careers'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof CareersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cars': {
+      id: '/cars'
+      path: '/cars'
+      fullPath: '/cars'
+      preLoaderRoute: typeof CarsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exchange': {
+      id: '/exchange'
+      path: '/exchange'
+      fullPath: '/exchange'
+      preLoaderRoute: typeof ExchangeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/finance': {
+      id: '/finance'
+      path: '/finance'
+      fullPath: '/finance'
+      preLoaderRoute: typeof FinanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/franchise': {
+      id: '/franchise'
+      path: '/franchise'
+      fullPath: '/franchise'
+      preLoaderRoute: typeof FranchiseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inspection': {
+      id: '/inspection'
+      path: '/inspection'
+      fullPath: '/inspection'
+      preLoaderRoute: typeof InspectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/insurance': {
+      id: '/insurance'
+      path: '/insurance'
+      fullPath: '/insurance'
+      preLoaderRoute: typeof InsuranceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/locations': {
+      id: '/locations'
+      path: '/locations'
+      fullPath: '/locations'
+      preLoaderRoute: typeof LocationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/roadside-assistance': {
+      id: '/roadside-assistance'
+      path: '/roadside-assistance'
+      fullPath: '/roadside-assistance'
+      preLoaderRoute: typeof RoadsideAssistanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rto': {
+      id: '/rto'
+      path: '/rto'
+      fullPath: '/rto'
+      preLoaderRoute: typeof RtoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sell-your-car': {
+      id: '/sell-your-car'
+      path: '/sell-your-car'
+      fullPath: '/sell-your-car'
+      preLoaderRoute: typeof SellYourCarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/warranty': {
+      id: '/warranty'
+      path: '/warranty'
+      fullPath: '/warranty'
+      preLoaderRoute: typeof WarrantyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/workshop': {
+      id: '/workshop'
+      path: '/workshop'
+      fullPath: '/workshop'
+      preLoaderRoute: typeof WorkshopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/franchise/apply': {
+      id: '/franchise/apply'
+      path: '/apply'
+      fullPath: '/franchise/apply'
+      preLoaderRoute: typeof FranchiseApplyRouteImport
+      parentRoute: typeof FranchiseRoute
+    }
   }
 }
 
+interface FranchiseRouteChildren {
+  FranchiseApplyRoute: typeof FranchiseApplyRoute
+}
+
+const FranchiseRouteChildren: FranchiseRouteChildren = {
+  FranchiseApplyRoute: FranchiseApplyRoute,
+}
+
+const FranchiseRouteWithChildren = FranchiseRoute._addFileChildren(
+  FranchiseRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  AccessoriesRoute: AccessoriesRoute,
+  BookServiceRoute: BookServiceRoute,
+  CareersRoute: CareersRoute,
+  CarsRoute: CarsRoute,
+  ContactRoute: ContactRoute,
+  ExchangeRoute: ExchangeRoute,
+  FaqRoute: FaqRoute,
+  FinanceRoute: FinanceRoute,
+  FranchiseRoute: FranchiseRouteWithChildren,
+  InspectionRoute: InspectionRoute,
+  InsuranceRoute: InsuranceRoute,
+  LocationsRoute: LocationsRoute,
+  RoadsideAssistanceRoute: RoadsideAssistanceRoute,
+  RtoRoute: RtoRoute,
+  SellYourCarRoute: SellYourCarRoute,
+  ServicesRoute: ServicesRoute,
+  WarrantyRoute: WarrantyRoute,
+  WorkshopRoute: WorkshopRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
