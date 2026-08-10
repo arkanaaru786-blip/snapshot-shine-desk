@@ -1,39 +1,33 @@
+import { Link } from "@tanstack/react-router";
 import {
   BatteryCharging,
-  Car,
   CarFront,
   FileText,
-  HandCoins,
   IndianRupee,
   PaintBucket,
-  Radio,
-  Repeat,
   ShieldCheck,
   Sofa,
   Sparkles,
   Truck,
   Umbrella,
   Wrench,
+  BadgeCheck,
 } from "lucide-react";
 
 const SERVICES = [
-  { icon: Car, label: "Buy\nCertified Cars" },
-  { icon: HandCoins, label: "Sell\nYour Car" },
-  { icon: Repeat, label: "Exchange\nYour Car" },
-  { icon: ShieldCheck, label: "Vehicle Inspection\n& Certification" },
-  { icon: IndianRupee, label: "Car\nFinance" },
-  { icon: Umbrella, label: "Insurance\nServices" },
-  { icon: FileText, label: "RTO\nDocumentation" },
-  { icon: CarFront, label: "Complete Car\nCare Workshop" },
-  { icon: Wrench, label: "Mechanical\nWorks" },
-  { icon: PaintBucket, label: "Denting &\nPainting" },
-  { icon: BatteryCharging, label: "Electrical\nWorks" },
-  { icon: Sparkles, label: "Detailing\nWorks" },
-  { icon: Sofa, label: "Car\nAccessories" },
-  { icon: Radio, label: "Motor Wallah\nConnected" },
-  { icon: ShieldCheck, label: "Extended\nWarranty" },
-  { icon: Truck, label: "24x7 Roadside\nAssistance" },
-];
+  { icon: ShieldCheck, label: "Vehicle Inspection\n& Certification", to: "/inspection" },
+  { icon: IndianRupee, label: "Car\nFinance", to: "/finance" },
+  { icon: Umbrella, label: "Insurance\nAssistance", to: "/insurance" },
+  { icon: FileText, label: "RTO\nDocumentation", to: "/rto" },
+  { icon: CarFront, label: "Complete\nCar Care", to: "/workshop" },
+  { icon: Wrench, label: "Mechanical\nWorks", to: "/workshop" },
+  { icon: BatteryCharging, label: "Electrical\nWorks", to: "/workshop" },
+  { icon: PaintBucket, label: "Denting &\nPainting", to: "/workshop" },
+  { icon: Sparkles, label: "Detailing", to: "/workshop" },
+  { icon: Sofa, label: "Car\nAccessories", to: "/accessories" },
+  { icon: BadgeCheck, label: "Extended\nWarranty", to: "/warranty" },
+  { icon: Truck, label: "Roadside\nAssistance", to: "/roadside-assistance" },
+] as const;
 
 export function Services() {
   return (
@@ -43,32 +37,32 @@ export function Services() {
           Our <span className="text-primary">Services</span>
         </h2>
 
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 xl:grid-cols-8">
-          {SERVICES.map(({ icon: Icon, label }) => (
-            <button
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+          {SERVICES.map(({ icon: Icon, label, to }) => (
+            <Link
               key={label}
-              type="button"
+              to={to}
               className="group flex flex-col items-center justify-start gap-3 border border-border bg-card px-3 py-5 text-center transition-all hover:-translate-y-1 hover:border-primary hover:shadow-panel"
             >
               <Icon className="h-7 w-7 text-foreground transition-colors group-hover:text-primary" strokeWidth={1.5} />
               <span className="whitespace-pre-line text-[0.68rem] font-semibold leading-tight">{label}</span>
-            </button>
+            </Link>
           ))}
         </div>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <a
-            href="#services"
-            className="inline-flex items-center gap-2 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.1em] text-primary-foreground transition-transform hover:-translate-y-0.5"
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link
+            to="/services"
+            className="inline-flex items-center justify-center gap-2 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.1em] text-primary-foreground transition-transform hover:-translate-y-0.5"
           >
             Explore All Services
-          </a>
-          <a
-            href="tel:18001234567"
-            className="inline-flex items-center gap-2 border border-border bg-card px-6 py-3 text-xs font-bold uppercase tracking-[0.1em] transition-colors hover:border-primary hover:text-primary"
+          </Link>
+          <Link
+            to="/book-service"
+            className="inline-flex items-center justify-center gap-2 border border-border bg-card px-6 py-3 text-xs font-bold uppercase tracking-[0.1em] transition-colors hover:border-primary hover:text-primary"
           >
             Book Service
-          </a>
+          </Link>
         </div>
       </div>
     </section>

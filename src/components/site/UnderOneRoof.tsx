@@ -2,8 +2,8 @@ import { CheckCircle2, Building2 } from "lucide-react";
 
 const POINTS = [
   ["Trusted Brand", "Quality Assurance"],
-  ["Modern Facilities", "Affordable Pricing"],
-  ["Complete Solutions", "Pan-India Network"],
+  ["Modern Facilities", "Transparent Pricing"],
+  ["Complete Solutions", "Madhya Pradesh Focus"],
 ];
 
 export function UnderOneRoof() {
@@ -33,9 +33,9 @@ export function UnderOneRoof() {
           </div>
 
           <div className="flex items-center gap-4 border-ink-foreground/20 lg:border-l lg:pl-8">
-            <Building2 className="h-10 w-10 text-primary" strokeWidth={1.5} />
+            <Building2 className="h-10 w-10 shrink-0 text-primary" strokeWidth={1.5} />
             <p className="font-display text-lg leading-tight">
-              100+ Quality Checks
+              150+ Point Inspection
               <span className="block text-sm font-normal text-ink-foreground/70">On Every Car</span>
             </p>
           </div>
