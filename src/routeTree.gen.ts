@@ -14,7 +14,6 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AccessoriesRouteImport } from './routes/accessories'
 import { Route as BookServiceRouteImport } from './routes/book-service'
 import { Route as CareersRouteImport } from './routes/careers'
-import { Route as CarsRouteImport } from './routes/cars'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ExchangeRouteImport } from './routes/exchange'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -29,6 +28,8 @@ import { Route as SellYourCarRouteImport } from './routes/sell-your-car'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as WarrantyRouteImport } from './routes/warranty'
 import { Route as WorkshopRouteImport } from './routes/workshop'
+import { Route as CarsIndexRouteImport } from './routes/cars.index'
+import { Route as CarsIdRouteImport } from './routes/cars.$id'
 import { Route as FranchiseApplyRouteImport } from './routes/franchise.apply'
 
 const IndexRoute = IndexRouteImport.update({
@@ -54,11 +55,6 @@ const BookServiceRoute = BookServiceRouteImport.update({
 const CareersRoute = CareersRouteImport.update({
   id: '/careers',
   path: '/careers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CarsRoute = CarsRouteImport.update({
-  id: '/cars',
-  path: '/cars',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -131,6 +127,16 @@ const WorkshopRoute = WorkshopRouteImport.update({
   path: '/workshop',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CarsIndexRoute = CarsIndexRouteImport.update({
+  id: '/cars/',
+  path: '/cars/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarsIdRoute = CarsIdRouteImport.update({
+  id: '/cars/$id',
+  path: '/cars/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FranchiseApplyRoute = FranchiseApplyRouteImport.update({
   id: '/apply',
   path: '/apply',
@@ -143,7 +149,6 @@ export interface FileRoutesByFullPath {
   '/accessories': typeof AccessoriesRoute
   '/book-service': typeof BookServiceRoute
   '/careers': typeof CareersRoute
-  '/cars': typeof CarsRoute
   '/contact': typeof ContactRoute
   '/exchange': typeof ExchangeRoute
   '/faq': typeof FaqRoute
@@ -158,7 +163,9 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/warranty': typeof WarrantyRoute
   '/workshop': typeof WorkshopRoute
+  '/cars/$id': typeof CarsIdRoute
   '/franchise/apply': typeof FranchiseApplyRoute
+  '/cars/': typeof CarsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -166,7 +173,6 @@ export interface FileRoutesByTo {
   '/accessories': typeof AccessoriesRoute
   '/book-service': typeof BookServiceRoute
   '/careers': typeof CareersRoute
-  '/cars': typeof CarsRoute
   '/contact': typeof ContactRoute
   '/exchange': typeof ExchangeRoute
   '/faq': typeof FaqRoute
@@ -181,7 +187,9 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/warranty': typeof WarrantyRoute
   '/workshop': typeof WorkshopRoute
+  '/cars/$id': typeof CarsIdRoute
   '/franchise/apply': typeof FranchiseApplyRoute
+  '/cars': typeof CarsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -190,7 +198,6 @@ export interface FileRoutesById {
   '/accessories': typeof AccessoriesRoute
   '/book-service': typeof BookServiceRoute
   '/careers': typeof CareersRoute
-  '/cars': typeof CarsRoute
   '/contact': typeof ContactRoute
   '/exchange': typeof ExchangeRoute
   '/faq': typeof FaqRoute
@@ -205,7 +212,9 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/warranty': typeof WarrantyRoute
   '/workshop': typeof WorkshopRoute
+  '/cars/$id': typeof CarsIdRoute
   '/franchise/apply': typeof FranchiseApplyRoute
+  '/cars/': typeof CarsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -215,7 +224,6 @@ export interface FileRouteTypes {
     | '/accessories'
     | '/book-service'
     | '/careers'
-    | '/cars'
     | '/contact'
     | '/exchange'
     | '/faq'
@@ -230,7 +238,9 @@ export interface FileRouteTypes {
     | '/services'
     | '/warranty'
     | '/workshop'
+    | '/cars/$id'
     | '/franchise/apply'
+    | '/cars/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -238,7 +248,6 @@ export interface FileRouteTypes {
     | '/accessories'
     | '/book-service'
     | '/careers'
-    | '/cars'
     | '/contact'
     | '/exchange'
     | '/faq'
@@ -253,7 +262,9 @@ export interface FileRouteTypes {
     | '/services'
     | '/warranty'
     | '/workshop'
+    | '/cars/$id'
     | '/franchise/apply'
+    | '/cars'
   id:
     | '__root__'
     | '/'
@@ -261,7 +272,6 @@ export interface FileRouteTypes {
     | '/accessories'
     | '/book-service'
     | '/careers'
-    | '/cars'
     | '/contact'
     | '/exchange'
     | '/faq'
@@ -276,7 +286,9 @@ export interface FileRouteTypes {
     | '/services'
     | '/warranty'
     | '/workshop'
+    | '/cars/$id'
     | '/franchise/apply'
+    | '/cars/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -285,7 +297,6 @@ export interface RootRouteChildren {
   AccessoriesRoute: typeof AccessoriesRoute
   BookServiceRoute: typeof BookServiceRoute
   CareersRoute: typeof CareersRoute
-  CarsRoute: typeof CarsRoute
   ContactRoute: typeof ContactRoute
   ExchangeRoute: typeof ExchangeRoute
   FaqRoute: typeof FaqRoute
@@ -300,6 +311,8 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   WarrantyRoute: typeof WarrantyRoute
   WorkshopRoute: typeof WorkshopRoute
+  CarsIdRoute: typeof CarsIdRoute
+  CarsIndexRoute: typeof CarsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -337,13 +350,6 @@ declare module '@tanstack/react-router' {
       path: '/careers'
       fullPath: '/careers'
       preLoaderRoute: typeof CareersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cars': {
-      id: '/cars'
-      path: '/cars'
-      fullPath: '/cars'
-      preLoaderRoute: typeof CarsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -444,6 +450,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkshopRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cars/': {
+      id: '/cars/'
+      path: '/cars'
+      fullPath: '/cars/'
+      preLoaderRoute: typeof CarsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cars/$id': {
+      id: '/cars/$id'
+      path: '/cars/$id'
+      fullPath: '/cars/$id'
+      preLoaderRoute: typeof CarsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/franchise/apply': {
       id: '/franchise/apply'
       path: '/apply'
@@ -472,7 +492,6 @@ const rootRouteChildren: RootRouteChildren = {
   AccessoriesRoute: AccessoriesRoute,
   BookServiceRoute: BookServiceRoute,
   CareersRoute: CareersRoute,
-  CarsRoute: CarsRoute,
   ContactRoute: ContactRoute,
   ExchangeRoute: ExchangeRoute,
   FaqRoute: FaqRoute,
@@ -487,6 +506,8 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   WarrantyRoute: WarrantyRoute,
   WorkshopRoute: WorkshopRoute,
+  CarsIdRoute: CarsIdRoute,
+  CarsIndexRoute: CarsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
