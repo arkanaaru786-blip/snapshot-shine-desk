@@ -29,6 +29,7 @@ import { Route as ServicesRouteImport } from './routes/services'
 import { Route as WarrantyRouteImport } from './routes/warranty'
 import { Route as WorkshopRouteImport } from './routes/workshop'
 import { Route as CarsIndexRouteImport } from './routes/cars.index'
+import { Route as CarsIdRouteImport } from './routes/cars.$id'
 import { Route as FranchiseApplyRouteImport } from './routes/franchise.apply'
 
 const IndexRoute = IndexRouteImport.update({
@@ -131,6 +132,11 @@ const CarsIndexRoute = CarsIndexRouteImport.update({
   path: '/cars/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CarsIdRoute = CarsIdRouteImport.update({
+  id: '/cars/$id',
+  path: '/cars/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FranchiseApplyRoute = FranchiseApplyRouteImport.update({
   id: '/apply',
   path: '/apply',
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/warranty': typeof WarrantyRoute
   '/workshop': typeof WorkshopRoute
+  '/cars/$id': typeof CarsIdRoute
   '/franchise/apply': typeof FranchiseApplyRoute
   '/cars/': typeof CarsIndexRoute
 }
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/warranty': typeof WarrantyRoute
   '/workshop': typeof WorkshopRoute
+  '/cars/$id': typeof CarsIdRoute
   '/franchise/apply': typeof FranchiseApplyRoute
   '/cars': typeof CarsIndexRoute
 }
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/warranty': typeof WarrantyRoute
   '/workshop': typeof WorkshopRoute
+  '/cars/$id': typeof CarsIdRoute
   '/franchise/apply': typeof FranchiseApplyRoute
   '/cars/': typeof CarsIndexRoute
 }
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/warranty'
     | '/workshop'
+    | '/cars/$id'
     | '/franchise/apply'
     | '/cars/'
   fileRoutesByTo: FileRoutesByTo
@@ -252,6 +262,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/warranty'
     | '/workshop'
+    | '/cars/$id'
     | '/franchise/apply'
     | '/cars'
   id:
@@ -275,6 +286,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/warranty'
     | '/workshop'
+    | '/cars/$id'
     | '/franchise/apply'
     | '/cars/'
   fileRoutesById: FileRoutesById
@@ -299,6 +311,7 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   WarrantyRoute: typeof WarrantyRoute
   WorkshopRoute: typeof WorkshopRoute
+  CarsIdRoute: typeof CarsIdRoute
   CarsIndexRoute: typeof CarsIndexRoute
 }
 
@@ -444,6 +457,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CarsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cars/$id': {
+      id: '/cars/$id'
+      path: '/cars/$id'
+      fullPath: '/cars/$id'
+      preLoaderRoute: typeof CarsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/franchise/apply': {
       id: '/franchise/apply'
       path: '/apply'
@@ -486,8 +506,19 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   WarrantyRoute: WarrantyRoute,
   WorkshopRoute: WorkshopRoute,
+  CarsIdRoute: CarsIdRoute,
   CarsIndexRoute: CarsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
