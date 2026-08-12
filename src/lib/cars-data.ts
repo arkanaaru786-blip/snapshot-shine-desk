@@ -112,9 +112,9 @@ const bodyPlaceholder: Record<BodyType, string> = {
 };
 
 const bodyGallery: Record<BodyType, string[]> = {
-  Hatchback: [placeholderHatchback, carHatch],
-  Sedan: [placeholderSedan, carSedan],
-  SUV: [placeholderSuv, carSuv],
+  Hatchback: [carHatch, placeholderHatchback],
+  Sedan: [carSedan, placeholderSedan],
+  SUV: [carSuv, placeholderSuv],
   MUV: [placeholderMuv],
 };
 

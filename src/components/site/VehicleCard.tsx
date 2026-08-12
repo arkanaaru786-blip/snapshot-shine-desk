@@ -20,6 +20,7 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
         images={vehicle.images}
         alt={`${vehicle.bodyType} demo placeholder photo for ${name}`}
         allowFullscreen={false}
+        showThumbnails={false}
         overlay={
           <>
             <div className="absolute left-0 top-0 flex flex-col items-start gap-1 p-2">
