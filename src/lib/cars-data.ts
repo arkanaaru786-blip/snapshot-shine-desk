@@ -2,9 +2,6 @@ import placeholderHatchback from "@/assets/placeholder-hatchback.jpg";
 import placeholderSedan from "@/assets/placeholder-sedan.jpg";
 import placeholderSuv from "@/assets/placeholder-suv.jpg";
 import placeholderMuv from "@/assets/placeholder-muv.jpg";
-import carSuv from "@/assets/car-suv.jpg";
-import carSedan from "@/assets/car-sedan.jpg";
-import carHatch from "@/assets/car-hatch.jpg";
 
 export type VehicleStatus = "Available" | "Reserved" | "Sold";
 export type BodyType = "Hatchback" | "Sedan" | "SUV" | "MUV";
@@ -112,9 +109,10 @@ const bodyPlaceholder: Record<BodyType, string> = {
 };
 
 const bodyGallery: Record<BodyType, string[]> = {
-  Hatchback: [carHatch, placeholderHatchback],
-  Sedan: [carSedan, placeholderSedan],
-  SUV: [carSuv, placeholderSuv],
+  // Neutral, brand-neutral demo placeholders only — never a mismatched brand photo.
+  Hatchback: [placeholderHatchback],
+  Sedan: [placeholderSedan],
+  SUV: [placeholderSuv],
   MUV: [placeholderMuv],
 };
 
