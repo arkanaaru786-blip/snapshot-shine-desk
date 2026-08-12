@@ -1,24 +1,23 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Fuel, Gauge, MapPin, MessageCircle, Search, Settings2, ShieldCheck, SlidersHorizontal, X } from "lucide-react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import {
+  AVAILABILITY,
   BODY_TYPES,
   BRANDS,
   FUELS,
   KM_RANGES,
   LOCATIONS,
   MODELS,
+  OWNERSHIPS,
   PRICE_RANGES,
   TRANSMISSIONS,
   VEHICLES,
   YEARS,
-  formatKm,
-  formatPrice,
   vehicleName,
   type Vehicle,
 } from "@/lib/cars-data";
-import { PHONE_HREF, whatsappLink } from "@/lib/site";
-import { TestDriveDialog } from "@/components/site/TestDriveDialog";
+import { VehicleCard } from "@/components/site/VehicleCard";
 
 const TITLE = "Certified Pre-Owned Cars in Indore | Motor Wallah";
 const DESCRIPTION =
@@ -50,6 +49,8 @@ type Filters = {
   transmission: string;
   bodyType: string;
   location: string;
+  ownership: string;
+  availability: string;
 };
 
 const EMPTY: Filters = {
@@ -62,6 +63,8 @@ const EMPTY: Filters = {
   transmission: ANY,
   bodyType: ANY,
   location: ANY,
+  ownership: ANY,
+  availability: ANY,
 };
 
 const LABELS: Record<keyof Filters, string> = {
@@ -74,6 +77,8 @@ const LABELS: Record<keyof Filters, string> = {
   transmission: "Transmission",
   bodyType: "Body Type",
   location: "Location",
+  ownership: "Ownership",
+  availability: "Availability",
 };
 
 const SORTS = [
@@ -95,6 +100,8 @@ function applyFilters(list: Vehicle[], f: Filters, q: string) {
     if (f.bodyType !== ANY && v.bodyType !== f.bodyType) return false;
     if (f.year !== ANY && String(v.year) !== f.year) return false;
     if (f.location !== ANY && v.location !== f.location) return false;
+    if (f.ownership !== ANY && v.ownership !== f.ownership) return false;
+    if (f.availability !== ANY && v.status !== f.availability) return false;
     if (f.price !== ANY) {
       const r = PRICE_RANGES.find((x) => x.label === f.price);
       if (r && (v.price < r.min || v.price >= r.max)) return false;
@@ -181,6 +188,8 @@ function Page() {
       <Field label="Transmission" value={filters.transmission} options={TRANSMISSIONS} onChange={set("transmission")} />
       <Field label="Body Type" value={filters.bodyType} options={BODY_TYPES} onChange={set("bodyType")} />
       <Field label="Location" value={filters.location} options={LOCATIONS} onChange={set("location")} />
+      <Field label="Ownership" value={filters.ownership} options={OWNERSHIPS} onChange={set("ownership")} />
+      <Field label="Availability" value={filters.availability} options={AVAILABILITY} onChange={set("availability")} />
       <button
         type="button"
         onClick={clearAll}
@@ -325,92 +334,5 @@ function Page() {
         </div>
       )}
     </div>
-  );
-}
-
-export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
-  const [testDrive, setTestDrive] = useState(false);
-  const name = vehicleName(vehicle);
-  const sold = vehicle.status === "Sold";
-
-  return (
-    <article className="flex flex-col border border-border bg-card shadow-panel">
-      <div className="relative">
-        <img
-          src={vehicle.images[0]}
-          alt={`${vehicle.bodyType} placeholder image for ${name}`}
-          loading="lazy"
-          width={1024}
-          height={640}
-          className="aspect-[16/10] w-full bg-secondary object-cover"
-        />
-        <div className="absolute left-0 top-0 flex flex-col items-start gap-1 p-2">
-          <span className="bg-primary px-2 py-1 text-[0.6rem] font-bold uppercase tracking-wide text-primary-foreground">
-            Motor Wallah Certified
-          </span>
-          <span className="bg-ink px-2 py-1 text-[0.6rem] font-bold uppercase tracking-wide text-ink-foreground">
-            150+ Point Inspection
-          </span>
-          {vehicle.demo && (
-            <span className="border border-border bg-card px-2 py-1 text-[0.6rem] font-bold uppercase tracking-wide">
-              Demo Listing
-            </span>
-          )}
-        </div>
-        {vehicle.status !== "Available" && (
-          <span className="absolute right-2 top-2 bg-ink px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wide text-ink-foreground">
-            {vehicle.status}
-          </span>
-        )}
-      </div>
-
-      <div className="flex flex-1 flex-col p-4 sm:p-5">
-        <h2 className="font-display text-lg uppercase leading-tight">{name}</h2>
-        <p className="mt-1 text-xl font-bold text-primary">{formatPrice(vehicle.price)}</p>
-
-        <dl className="mt-3 grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1.5"><Gauge className="h-3.5 w-3.5 text-primary" />{formatKm(vehicle.kilometres)}</div>
-          <div className="flex items-center gap-1.5"><Fuel className="h-3.5 w-3.5 text-primary" />{vehicle.fuel}</div>
-          <div className="flex items-center gap-1.5"><Settings2 className="h-3.5 w-3.5 text-primary" />{vehicle.transmission}</div>
-          <div className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-primary" />{vehicle.location}</div>
-          <div className="flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-primary" />{vehicle.bodyType}</div>
-        </dl>
-
-        <div className="mt-auto grid gap-2 pt-4">
-          <Link
-            to="/cars/$id"
-            params={{ id: vehicle.id }}
-            className="bg-primary px-4 py-2.5 text-center text-[0.7rem] font-bold uppercase tracking-[0.12em] text-primary-foreground transition-transform hover:-translate-y-0.5"
-          >
-            View Details
-          </Link>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              disabled={sold}
-              onClick={() => setTestDrive(true)}
-              className="border border-border px-3 py-2.5 text-center text-[0.7rem] font-bold uppercase tracking-[0.12em] transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border disabled:hover:text-foreground"
-            >
-              {sold ? "Sold" : "Book Test Drive"}
-            </button>
-            <a
-              href={whatsappLink(
-                `Hello MOTOR WALLAH, I am interested in the ${name} priced at ${formatPrice(vehicle.price)}. I would like to know more about this vehicle.`,
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 border border-border px-3 py-2.5 text-[0.7rem] font-bold uppercase tracking-[0.12em] transition-colors hover:border-primary hover:text-primary"
-            >
-              <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
-            </a>
-          </div>
-          <a href={PHONE_HREF} className="text-center text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
-            Or call our team
-          </a>
-        </div>
-      </div>
-
-      <TestDriveDialog vehicle={vehicle} open={testDrive} onClose={() => setTestDrive(false)} />
-    </article>
   );
 }
