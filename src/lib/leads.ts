@@ -16,12 +16,12 @@ export type LeadType =
 export type Lead = {
   type: LeadType;
   source: string;
-  vehicleId?: string;
-  vehicleName?: string;
-  location?: string;
-  name?: string;
-  mobile?: string;
-  fields?: Record<string, string>;
+  vehicleId?: string | undefined;
+  vehicleName?: string | undefined;
+  location?: string | undefined;
+  name?: string | undefined;
+  mobile?: string | undefined;
+  fields?: Record<string, string> | undefined;
   createdAt: string;
 };
 
