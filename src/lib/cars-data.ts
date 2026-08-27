@@ -45,6 +45,7 @@ export type InspectionReport = {
   score: number | null;
   inspectedOn: string | null;
   inspectedBy: string | null;
+  certificationId: string | null;
   items: InspectionItem[];
 };
 
@@ -146,6 +147,7 @@ const demoInspection = (seed: number): InspectionReport => {
     score: Math.round((passed / applicable.length) * 100),
     inspectedOn: null,
     inspectedBy: null,
+    certificationId: null,
     items,
   };
 };
