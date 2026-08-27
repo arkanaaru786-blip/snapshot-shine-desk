@@ -164,39 +164,52 @@ function Page() {
 
             {/* Certification */}
             <Section title="Motor Wallah Certification">
-              <p className="mt-1 text-sm text-muted-foreground">150+ Point Inspection</p>
-              {report ? (
-                <>
-                  <div className="mt-3 flex items-baseline justify-between">
-                    <span className="text-[0.65rem] uppercase tracking-wide text-muted-foreground">Inspection score</span>
-                    <span className="font-display text-2xl text-primary">{report.score ?? "—"}%</span>
-                  </div>
-                  <div className="mt-2 h-2 w-full bg-border">
-                    <div className="h-full bg-primary" style={{ width: `${report.score ?? 0}%` }} />
-                  </div>
-                  <div className="mt-4 grid grid-cols-2 gap-2 text-xs sm:grid-cols-3">
-                    {report.items.map((i) => (
-                      <span key={i.category} className="flex items-center gap-1.5 border border-border px-2 py-1.5">
-                        <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
-                        <span className="truncate">{i.category}</span>
-                      </span>
-                    ))}
-                  </div>
-                  {!report.verified && (
-                    <p className="mt-3 border border-primary/40 bg-primary/10 px-3 py-2 text-[0.7rem] font-bold uppercase tracking-wide text-primary">
-                      Demo inspection data — not a verified physical inspection.
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center border border-primary bg-primary/10">
+                  <ShieldCheck className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="font-display text-xl uppercase text-foreground">MOTOR WALLAH CERTIFIED</p>
+                  <p className="text-xs font-bold uppercase tracking-wide text-primary">150+ POINT QUALITY INSPECTION</p>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Vehicle assessed through the MOTOR WALLAH quality evaluation process.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {[
+                  "Quality Checked",
+                  "Vehicle Condition Assessed",
+                  "Documentation Checked",
+                  "Road Test Assessed",
+                ].map((label) => (
+                  <span key={label} className="flex items-center gap-1.5 text-xs font-semibold">
+                    <Check className="h-3.5 w-3.5 shrink-0 text-primary" />
+                    <span>{label}</span>
+                  </span>
+                ))}
+              </div>
+
+              {report?.inspectedOn && (
+                <div className="mt-4 grid gap-1 border-t border-border pt-3 text-xs text-muted-foreground">
+                  <p>
+                    Inspection Date:{" "}
+                    <span className="font-semibold text-foreground">{report.inspectedOn}</span>
+                  </p>
+                  {report.certificationId && (
+                    <p>
+                      Certification ID:{" "}
+                      <span className="font-semibold text-foreground">{report.certificationId}</span>
                     </p>
                   )}
-                  <button
-                    type="button"
-                    onClick={() => setInspection(true)}
-                    className="mt-4 border border-border px-6 py-3 text-xs font-bold uppercase tracking-[0.12em] hover:border-primary hover:text-primary"
-                  >
-                    View Full Inspection Report
-                  </button>
-                </>
-              ) : (
-                <p className="mt-2 text-sm text-muted-foreground">{TO_BE_VERIFIED}</p>
+                </div>
+              )}
+
+              {vehicle.demo && (
+                <p className="mt-4 border border-primary/40 bg-primary/10 px-3 py-2 text-[0.7rem] font-bold uppercase tracking-wide text-primary">
+                  DEMO CERTIFICATION
+                </p>
               )}
             </Section>
 
