@@ -232,17 +232,19 @@ export const KM_RANGES = [
   { label: "50,000 km+", min: 50000, max: Infinity },
 ];
 
-export const FUELS = ["Petrol", "Diesel", "CNG", "Electric"];
-export const TRANSMISSIONS = ["Manual", "Automatic", "AMT", "DCT"];
+export const FUELS = [...FUEL_TYPES];
+export const TRANSMISSIONS = [...TRANSMISSION_TYPES];
 export const BODY_TYPES: BodyType[] = ["Hatchback", "Sedan", "SUV", "MUV"];
 export const LOCATIONS = ["Indore", "Bhopal", "Ujjain", "Dewas", "Other Motor Wallah locations"];
 export const OWNERSHIPS = ["First Owner", "Second Owner", "Third Owner"];
 export const AVAILABILITY: VehicleStatus[] = ["Available", "Reserved", "Sold"];
 
 const uniq = (values: string[]) => Array.from(new Set(values)).sort();
-export const BRANDS = uniq(VEHICLES.map((v) => v.make));
-export const MODELS = uniq(VEHICLES.map((v) => v.model));
+/** Brand/model options come from the central catalogue, never from listing data. */
+export const BRANDS = BRAND_NAMES;
+export const MODELS = ALL_MODEL_NAMES;
 export const YEARS = uniq(VEHICLES.map((v) => String(v.year))).reverse();
+
 
 export const vehicleName = (v: Vehicle) => `${v.year} ${v.make} ${v.model} ${v.variant}`;
 export const formatPrice = (lakh: number) => `₹${lakh.toFixed(2)} Lakh`;
