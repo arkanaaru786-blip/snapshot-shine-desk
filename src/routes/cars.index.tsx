@@ -25,13 +25,14 @@ const DESCRIPTION =
   "Find quality-checked pre-owned cars with transparent pricing and complete ownership support across Madhya Pradesh.";
 
 export type CarsSearch = {
-  brand: string | undefined;
-  model: string | undefined;
-  price: string | undefined;
-  fuel: string | undefined;
-  transmission: string | undefined;
-  location: string | undefined;
+  brand?: string | undefined;
+  model?: string | undefined;
+  price?: string | undefined;
+  fuel?: string | undefined;
+  transmission?: string | undefined;
+  location?: string | undefined;
 };
+
 
 const str = (v: unknown) => (typeof v === "string" && v.trim() ? v : undefined);
 
