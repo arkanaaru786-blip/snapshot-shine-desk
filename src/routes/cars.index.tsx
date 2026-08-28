@@ -177,10 +177,18 @@ function Page() {
 
   const activeChips = (Object.keys(filters) as (keyof Filters)[]).filter((k) => filters[k] !== ANY);
 
+  // Model options always depend on the selected brand (central catalogue).
+  const modelOptions = filters.brand === ANY ? ALL_MODEL_NAMES : modelsForBrand(filters.brand);
+
+  const setBrand = (v: string) =>
+    // Changing brand always resets model so an invalid pair can never remain.
+    setFilters((f) => ({ ...f, brand: v, model: ANY }));
+
   const fields = (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-      <Field label="Brand" value={filters.brand} options={BRANDS} onChange={set("brand")} />
-      <Field label="Model" value={filters.model} options={MODELS} onChange={set("model")} />
+      <Field label="Brand" value={filters.brand} options={BRANDS} onChange={setBrand} />
+      <Field label="Model" value={filters.model} options={modelOptions} onChange={set("model")} />
+
       <Field label="Price" value={filters.price} options={PRICE_RANGES.map((p) => p.label)} onChange={set("price")} />
       <Field label="Year" value={filters.year} options={YEARS} onChange={set("year")} />
       <Field label="Kilometres" value={filters.km} options={KM_RANGES.map((k) => k.label)} onChange={set("km")} />
