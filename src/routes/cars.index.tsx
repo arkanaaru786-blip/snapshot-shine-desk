@@ -182,7 +182,24 @@ function Field({
 }
 
 function Page() {
-  const [filters, setFilters] = useState<Filters>(EMPTY);
+  const search = Route.useSearch();
+  const [filters, setFilters] = useState<Filters>(() => {
+    const brand = search.brand && BRANDS.includes(search.brand) ? search.brand : ANY;
+    const model =
+      search.model && (brand === ANY ? true : isValidBrandModel(brand, search.model))
+        ? search.model
+        : ANY;
+    return {
+      ...EMPTY,
+      brand,
+      model,
+      price: search.price ?? ANY,
+      fuel: search.fuel ?? ANY,
+      transmission: search.transmission ?? ANY,
+      location: search.location ?? ANY,
+    };
+  });
+
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("recommended");
   const [drawerOpen, setDrawerOpen] = useState(false);
