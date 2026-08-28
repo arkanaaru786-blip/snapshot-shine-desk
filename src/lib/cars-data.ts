@@ -227,11 +227,11 @@ export const VEHICLES: Vehicle[] = [
 
 export const PRICE_RANGES = [
   { label: "Under ₹5 Lakh", min: 0, max: 5 },
-  { label: "₹5–8 Lakh", min: 5, max: 8 },
-  { label: "₹8–12 Lakh", min: 8, max: 12 },
-  { label: "₹12–20 Lakh", min: 12, max: 20 },
+  { label: "₹5–10 Lakh", min: 5, max: 10 },
+  { label: "₹10–20 Lakh", min: 10, max: 20 },
   { label: "₹20 Lakh+", min: 20, max: Infinity },
 ];
+
 
 export const KM_RANGES = [
   { label: "Under 25,000 km", min: 0, max: 25000 },
