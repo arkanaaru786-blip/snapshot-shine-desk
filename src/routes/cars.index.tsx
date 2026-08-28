@@ -24,7 +24,26 @@ const TITLE = "Certified Pre-Owned Cars in Indore | Motor Wallah";
 const DESCRIPTION =
   "Find quality-checked pre-owned cars with transparent pricing and complete ownership support across Madhya Pradesh.";
 
+export type CarsSearch = {
+  brand?: string;
+  model?: string;
+  price?: string;
+  fuel?: string;
+  transmission?: string;
+  location?: string;
+};
+
+const str = (v: unknown) => (typeof v === "string" && v.trim() ? v : undefined);
+
 export const Route = createFileRoute("/cars/")({
+  validateSearch: (search: Record<string, unknown>): CarsSearch => ({
+    brand: str(search.brand),
+    model: str(search.model),
+    price: str(search.price),
+    fuel: str(search.fuel),
+    transmission: str(search.transmission),
+    location: str(search.location),
+  }),
   head: () => ({
     meta: [
       { title: TITLE },
@@ -37,6 +56,7 @@ export const Route = createFileRoute("/cars/")({
   }),
   component: Page,
 });
+
 
 const ANY = "any";
 
