@@ -1,4 +1,11 @@
+import {
+  ALL_MODEL_NAMES,
+  BRAND_NAMES,
+  FUEL_TYPES,
+  TRANSMISSION_TYPES,
+} from "@/lib/vehicle-catalog";
 import placeholderHatchback from "@/assets/placeholder-hatchback.jpg";
+
 import placeholderSedan from "@/assets/placeholder-sedan.jpg";
 import placeholderSuv from "@/assets/placeholder-suv.jpg";
 import placeholderMuv from "@/assets/placeholder-muv.jpg";
