@@ -96,10 +96,19 @@ export function CarSearch() {
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Link
               to="/cars"
+              search={{
+                brand: brand || undefined,
+                model: model || undefined,
+                price: rest["Budget"] || undefined,
+                fuel: rest["Fuel Type"] || undefined,
+                transmission: rest["Transmission"] || undefined,
+                location: rest["Location"] || undefined,
+              }}
               className="inline-flex items-center justify-center gap-2 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.12em] text-primary-foreground transition-transform hover:-translate-y-0.5"
             >
               <Search className="h-4 w-4" /> Search Cars
             </Link>
+
             <Link
               to="/cars"
               className="inline-flex items-center justify-center gap-2 border border-border px-6 py-3 text-xs font-bold uppercase tracking-[0.12em] transition-colors hover:border-primary hover:text-primary"
