@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search, SlidersHorizontal, X } from "lucide-react";
+import { ALL_MODEL_NAMES, modelsForBrand } from "@/lib/vehicle-catalog";
 import {
   AVAILABILITY,
   BODY_TYPES,
@@ -8,7 +9,6 @@ import {
   FUELS,
   KM_RANGES,
   LOCATIONS,
-  MODELS,
   OWNERSHIPS,
   PRICE_RANGES,
   TRANSMISSIONS,
@@ -17,6 +17,7 @@ import {
   vehicleName,
   type Vehicle,
 } from "@/lib/cars-data";
+
 import { VehicleCard } from "@/components/site/VehicleCard";
 
 const TITLE = "Certified Pre-Owned Cars in Indore | Motor Wallah";
