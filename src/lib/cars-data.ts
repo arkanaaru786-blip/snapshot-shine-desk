@@ -221,7 +221,7 @@ export const VEHICLES: Vehicle[] = [
   demo({ id: "mw-03", status: "Available", make: "Hyundai", model: "Creta", variant: "SX", year: 2022, price: 12.5, kilometres: 45000, fuel: "Petrol", transmission: "Automatic", bodyType: "SUV", location: "Indore", createdAt: "2026-08-04", featured: true, ownership: "Second Owner" }, 3),
   demo({ id: "mw-04", status: "Reserved", make: "Maruti Suzuki", model: "Ertiga", variant: "ZXI CNG", year: 2021, price: 9.6, kilometres: 54800, fuel: "CNG", transmission: "Manual", bodyType: "MUV", location: "Ujjain", createdAt: "2026-07-10", ownership: "Second Owner" }, 4),
   demo({ id: "mw-05", status: "Available", make: "Tata", model: "Nexon", variant: "XZ+", year: 2021, price: 9.1, kilometres: 33250, fuel: "Diesel", transmission: "Manual", bodyType: "SUV", location: "Indore", createdAt: "2026-08-01", ownership: "First Owner" }, 5),
-  demo({ id: "mw-06", status: "Available", make: "Mahindra", model: "Scorpio N", variant: "Z8", year: 2022, price: 18.2, kilometres: 29800, fuel: "Diesel", transmission: "Manual", bodyType: "SUV", location: "Indore", createdAt: "2026-08-08", featured: true, ownership: "First Owner" }, 6),
+  demo({ id: "mw-06", status: "Available", make: "Mahindra", model: "Scorpio-N", variant: "Z8", year: 2022, price: 18.2, kilometres: 29800, fuel: "Diesel", transmission: "Manual", bodyType: "SUV", location: "Indore", createdAt: "2026-08-08", featured: true, ownership: "First Owner" }, 6),
   demo({ id: "mw-07", status: "Sold", make: "Tata", model: "Altroz", variant: "XT", year: 2020, price: 6.25, kilometres: 41200, fuel: "Petrol", transmission: "Manual", bodyType: "Hatchback", location: "Dewas", createdAt: "2026-06-30", ownership: "Second Owner" }, 7),
 ];
 
