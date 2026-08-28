@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search, SlidersHorizontal, X } from "lucide-react";
+import { ALL_MODEL_NAMES, isValidBrandModel, modelsForBrand } from "@/lib/vehicle-catalog";
 import {
   AVAILABILITY,
   BODY_TYPES,
@@ -8,7 +9,6 @@ import {
   FUELS,
   KM_RANGES,
   LOCATIONS,
-  MODELS,
   OWNERSHIPS,
   PRICE_RANGES,
   TRANSMISSIONS,
@@ -17,13 +17,35 @@ import {
   vehicleName,
   type Vehicle,
 } from "@/lib/cars-data";
+
 import { VehicleCard } from "@/components/site/VehicleCard";
 
 const TITLE = "Certified Pre-Owned Cars in Indore | Motor Wallah";
 const DESCRIPTION =
   "Find quality-checked pre-owned cars with transparent pricing and complete ownership support across Madhya Pradesh.";
 
+export type CarsSearch = {
+  brand?: string | undefined;
+  model?: string | undefined;
+  price?: string | undefined;
+  fuel?: string | undefined;
+  transmission?: string | undefined;
+  location?: string | undefined;
+};
+
+
+const str = (v: unknown) => (typeof v === "string" && v.trim() ? v : undefined);
+
 export const Route = createFileRoute("/cars/")({
+  validateSearch: (search: Record<string, unknown>): CarsSearch => ({
+    brand: str(search["brand"]),
+    model: str(search["model"]),
+    price: str(search["price"]),
+    fuel: str(search["fuel"]),
+    transmission: str(search["transmission"]),
+    location: str(search["location"]),
+  }),
+
   head: () => ({
     meta: [
       { title: TITLE },
@@ -36,6 +58,7 @@ export const Route = createFileRoute("/cars/")({
   }),
   component: Page,
 });
+
 
 const ANY = "any";
 
@@ -159,7 +182,24 @@ function Field({
 }
 
 function Page() {
-  const [filters, setFilters] = useState<Filters>(EMPTY);
+  const search = Route.useSearch();
+  const [filters, setFilters] = useState<Filters>(() => {
+    const brand = search.brand && BRANDS.includes(search.brand) ? search.brand : ANY;
+    const model =
+      search.model && (brand === ANY ? true : isValidBrandModel(brand, search.model))
+        ? search.model
+        : ANY;
+    return {
+      ...EMPTY,
+      brand,
+      model,
+      price: search.price ?? ANY,
+      fuel: search.fuel ?? ANY,
+      transmission: search.transmission ?? ANY,
+      location: search.location ?? ANY,
+    };
+  });
+
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("recommended");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -177,10 +217,18 @@ function Page() {
 
   const activeChips = (Object.keys(filters) as (keyof Filters)[]).filter((k) => filters[k] !== ANY);
 
+  // Model options always depend on the selected brand (central catalogue).
+  const modelOptions = filters.brand === ANY ? ALL_MODEL_NAMES : modelsForBrand(filters.brand);
+
+  const setBrand = (v: string) =>
+    // Changing brand always resets model so an invalid pair can never remain.
+    setFilters((f) => ({ ...f, brand: v, model: ANY }));
+
   const fields = (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-      <Field label="Brand" value={filters.brand} options={BRANDS} onChange={set("brand")} />
-      <Field label="Model" value={filters.model} options={MODELS} onChange={set("model")} />
+      <Field label="Brand" value={filters.brand} options={BRANDS} onChange={setBrand} />
+      <Field label="Model" value={filters.model} options={modelOptions} onChange={set("model")} />
+
       <Field label="Price" value={filters.price} options={PRICE_RANGES.map((p) => p.label)} onChange={set("price")} />
       <Field label="Year" value={filters.year} options={YEARS} onChange={set("year")} />
       <Field label="Kilometres" value={filters.km} options={KM_RANGES.map((k) => k.label)} onChange={set("km")} />
