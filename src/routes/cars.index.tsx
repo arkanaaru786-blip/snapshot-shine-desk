@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import { ALL_MODEL_NAMES, isValidBrandModel, modelsForBrand } from "@/lib/vehicle-catalog";
+import { brandsForYear, isValidBrandModel, modelsForBrand } from "@/lib/vehicle-catalog";
+import { SearchableSelect } from "@/components/site/SearchableSelect";
 import {
   AVAILABILITY,
   BODY_TYPES,
