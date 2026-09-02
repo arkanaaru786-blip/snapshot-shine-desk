@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import { ALL_MODEL_NAMES, isValidBrandModel, modelsForBrand } from "@/lib/vehicle-catalog";
+import { brandsForYear, isValidBrandModel, modelsForBrand } from "@/lib/vehicle-catalog";
+import { SearchableSelect } from "@/components/site/SearchableSelect";
 import {
   AVAILABILITY,
   BODY_TYPES,
@@ -217,20 +218,40 @@ function Page() {
 
   const activeChips = (Object.keys(filters) as (keyof Filters)[]).filter((k) => filters[k] !== ANY);
 
-  // Model options always depend on the selected brand (central catalogue).
-  const modelOptions = filters.brand === ANY ? ALL_MODEL_NAMES : modelsForBrand(filters.brand);
+  // Brand + model options come from the central catalogue and respect the year.
+  const year = filters.year === ANY ? undefined : filters.year;
+  const brandOptions = brandsForYear(year);
+  const modelOptions = modelsForBrand(filters.brand === ANY ? undefined : filters.brand, year);
 
   const setBrand = (v: string) =>
     // Changing brand always resets model so an invalid pair can never remain.
     setFilters((f) => ({ ...f, brand: v, model: ANY }));
 
+  const setYear = (v: string) =>
+    setFilters((f) => {
+      const y = v === ANY ? undefined : v;
+      const brandOk = f.brand === ANY || brandsForYear(y).includes(f.brand);
+      const brand = brandOk ? f.brand : ANY;
+      const modelOk =
+        f.model === ANY ||
+        modelsForBrand(brand === ANY ? undefined : brand, y).includes(f.model);
+      return { ...f, year: v, brand, model: modelOk ? f.model : ANY };
+    });
+
   const fields = (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-      <Field label="Brand" value={filters.brand} options={BRANDS} onChange={setBrand} />
-      <Field label="Model" value={filters.model} options={modelOptions} onChange={set("model")} />
+      <Field label="Brand" value={filters.brand} options={brandOptions} onChange={setBrand} />
+      <SearchableSelect
+        label="Model"
+        placeholder="All Model"
+        value={filters.model === ANY ? "" : filters.model}
+        options={modelOptions}
+        onChange={(v) => set("model")(v || ANY)}
+      />
+
 
       <Field label="Price" value={filters.price} options={PRICE_RANGES.map((p) => p.label)} onChange={set("price")} />
-      <Field label="Year" value={filters.year} options={YEARS} onChange={set("year")} />
+      <Field label="Year" value={filters.year} options={YEARS} onChange={setYear} />
       <Field label="Kilometres" value={filters.km} options={KM_RANGES.map((k) => k.label)} onChange={set("km")} />
       <Field label="Fuel Type" value={filters.fuel} options={FUELS} onChange={set("fuel")} />
       <Field label="Transmission" value={filters.transmission} options={TRANSMISSIONS} onChange={set("transmission")} />

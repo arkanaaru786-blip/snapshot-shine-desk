@@ -3,6 +3,7 @@ import {
   BRAND_NAMES,
   FUEL_TYPES,
   TRANSMISSION_TYPES,
+  YEAR_OPTIONS,
 } from "@/lib/vehicle-catalog";
 import placeholderHatchback from "@/assets/placeholder-hatchback.jpg";
 
@@ -246,11 +247,10 @@ export const LOCATIONS = ["Indore", "Bhopal", "Ujjain", "Dewas", "Other Motor Wa
 export const OWNERSHIPS = ["First Owner", "Second Owner", "Third Owner"];
 export const AVAILABILITY: VehicleStatus[] = ["Available", "Reserved", "Sold"];
 
-const uniq = (values: string[]) => Array.from(new Set(values)).sort();
-/** Brand/model options come from the central catalogue, never from listing data. */
+/** Brand/model/year options come from the central catalogue, never from listing data. */
 export const BRANDS = BRAND_NAMES;
 export const MODELS = ALL_MODEL_NAMES;
-export const YEARS = uniq(VEHICLES.map((v) => String(v.year))).reverse();
+export const YEARS = YEAR_OPTIONS;
 
 
 export const vehicleName = (v: Vehicle) => `${v.year} ${v.make} ${v.model} ${v.variant}`;
