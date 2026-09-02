@@ -3,6 +3,7 @@ import {
   BRAND_NAMES,
   FUEL_TYPES,
   TRANSMISSION_TYPES,
+  YEAR_OPTIONS,
 } from "@/lib/vehicle-catalog";
 import placeholderHatchback from "@/assets/placeholder-hatchback.jpg";
 
