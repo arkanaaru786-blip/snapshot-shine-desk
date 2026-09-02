@@ -251,7 +251,7 @@ function Page() {
 
 
       <Field label="Price" value={filters.price} options={PRICE_RANGES.map((p) => p.label)} onChange={set("price")} />
-      <Field label="Year" value={filters.year} options={YEARS} onChange={set("year")} />
+      <Field label="Year" value={filters.year} options={YEARS} onChange={setYear} />
       <Field label="Kilometres" value={filters.km} options={KM_RANGES.map((k) => k.label)} onChange={set("km")} />
       <Field label="Fuel Type" value={filters.fuel} options={FUELS} onChange={set("fuel")} />
       <Field label="Transmission" value={filters.transmission} options={TRANSMISSIONS} onChange={set("transmission")} />
