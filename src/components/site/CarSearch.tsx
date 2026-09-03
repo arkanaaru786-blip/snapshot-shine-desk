@@ -70,18 +70,34 @@ export function CarSearch() {
               label="Brand"
               placeholder="All Brands"
               value={brand}
-              options={BRAND_NAMES}
+              options={brandOptions}
               onChange={(v) => {
                 setBrand(v);
                 setModel(ALL); // brand change always resets the model
               }}
             />
-            <SelectField
+            <SearchableSelect
               label="Model"
               placeholder="All Models"
               value={model}
               options={modelOptions}
               onChange={setModel}
+            />
+            <SelectField
+              label="Year"
+              placeholder="All Years"
+              value={year}
+              options={YEAR_OPTIONS}
+              onChange={(v) => {
+                setYear(v);
+                const y = v || undefined;
+                if (brand && !brandsForYear(y).includes(brand)) {
+                  setBrand(ALL);
+                  setModel(ALL);
+                } else if (model && !modelsForBrand(brand || undefined, y).includes(model)) {
+                  setModel(ALL);
+                }
+              }}
             />
             {STATIC_FIELDS.map((f) => (
               <SelectField
