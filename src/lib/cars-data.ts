@@ -1,5 +1,4 @@
 import {
-  ALL_MODEL_NAMES,
   BRAND_NAMES,
   FUEL_TYPES,
   TRANSMISSION_TYPES,
@@ -249,7 +248,6 @@ export const AVAILABILITY: VehicleStatus[] = ["Available", "Reserved", "Sold"];
 
 /** Brand/model/year options come from the central catalogue, never from listing data. */
 export const BRANDS = BRAND_NAMES;
-export const MODELS = ALL_MODEL_NAMES;
 export const YEARS = YEAR_OPTIONS;
 
 
