@@ -28,6 +28,7 @@ const DESCRIPTION =
 export type CarsSearch = {
   brand?: string | undefined;
   model?: string | undefined;
+  year?: string | undefined;
   price?: string | undefined;
   fuel?: string | undefined;
   transmission?: string | undefined;
@@ -41,6 +42,7 @@ export const Route = createFileRoute("/cars/")({
   validateSearch: (search: Record<string, unknown>): CarsSearch => ({
     brand: str(search["brand"]),
     model: str(search["model"]),
+    year: str(search["year"]),
     price: str(search["price"]),
     fuel: str(search["fuel"]),
     transmission: str(search["transmission"]),
@@ -187,13 +189,14 @@ function Page() {
   const [filters, setFilters] = useState<Filters>(() => {
     const brand = search.brand && BRANDS.includes(search.brand) ? search.brand : ANY;
     const model =
-      search.model && (brand === ANY ? true : isValidBrandModel(brand, search.model))
+      search.model && (brand === ANY ? true : isValidBrandModel(brand, search.model, search.year))
         ? search.model
         : ANY;
     return {
       ...EMPTY,
       brand,
       model,
+      year: search.year ?? ANY,
       price: search.price ?? ANY,
       fuel: search.fuel ?? ANY,
       transmission: search.transmission ?? ANY,

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import { BRAND_NAMES, YEAR_OPTIONS, brandsForYear, modelsForBrand } from "@/lib/vehicle-catalog";
+import { YEAR_OPTIONS, brandsForYear, modelsForBrand } from "@/lib/vehicle-catalog";
 import { SearchableSelect } from "@/components/site/SearchableSelect";
 
 const ALL = "";
@@ -48,9 +48,11 @@ function SelectField({
 export function CarSearch() {
   const [brand, setBrand] = useState(ALL);
   const [model, setModel] = useState(ALL);
+  const [year, setYear] = useState(ALL);
   const [rest, setRest] = useState<Record<string, string>>({});
 
-  const modelOptions = brand === ALL ? ALL_MODEL_NAMES : modelsForBrand(brand);
+  const brandOptions = brandsForYear(year || undefined);
+  const modelOptions = modelsForBrand(brand || undefined, year || undefined);
 
   return (
     <section id="search" className="bg-secondary/60 py-14">
@@ -68,18 +70,34 @@ export function CarSearch() {
               label="Brand"
               placeholder="All Brands"
               value={brand}
-              options={BRAND_NAMES}
+              options={brandOptions}
               onChange={(v) => {
                 setBrand(v);
                 setModel(ALL); // brand change always resets the model
               }}
             />
-            <SelectField
+            <SearchableSelect
               label="Model"
               placeholder="All Models"
               value={model}
               options={modelOptions}
               onChange={setModel}
+            />
+            <SelectField
+              label="Year"
+              placeholder="All Years"
+              value={year}
+              options={YEAR_OPTIONS}
+              onChange={(v) => {
+                setYear(v);
+                const y = v || undefined;
+                if (brand && !brandsForYear(y).includes(brand)) {
+                  setBrand(ALL);
+                  setModel(ALL);
+                } else if (model && !modelsForBrand(brand || undefined, y).includes(model)) {
+                  setModel(ALL);
+                }
+              }}
             />
             {STATIC_FIELDS.map((f) => (
               <SelectField
@@ -100,6 +118,7 @@ export function CarSearch() {
               search={{
                 brand: brand || undefined,
                 model: model || undefined,
+                year: year || undefined,
                 price: rest["Budget"] || undefined,
                 fuel: rest["Fuel Type"] || undefined,
                 transmission: rest["Transmission"] || undefined,
