@@ -118,6 +118,7 @@ export function CarSearch() {
               search={{
                 brand: brand || undefined,
                 model: model || undefined,
+                year: year || undefined,
                 price: rest["Budget"] || undefined,
                 fuel: rest["Fuel Type"] || undefined,
                 transmission: rest["Transmission"] || undefined,
