@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import { BRAND_NAMES, YEAR_OPTIONS, brandsForYear, modelsForBrand } from "@/lib/vehicle-catalog";
+import { YEAR_OPTIONS, brandsForYear, modelsForBrand } from "@/lib/vehicle-catalog";
 import { SearchableSelect } from "@/components/site/SearchableSelect";
 
 const ALL = "";
