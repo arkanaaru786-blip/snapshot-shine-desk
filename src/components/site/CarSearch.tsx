@@ -48,9 +48,11 @@ function SelectField({
 export function CarSearch() {
   const [brand, setBrand] = useState(ALL);
   const [model, setModel] = useState(ALL);
+  const [year, setYear] = useState(ALL);
   const [rest, setRest] = useState<Record<string, string>>({});
 
-  const modelOptions = brand === ALL ? ALL_MODEL_NAMES : modelsForBrand(brand);
+  const brandOptions = brandsForYear(year || undefined);
+  const modelOptions = modelsForBrand(brand || undefined, year || undefined);
 
   return (
     <section id="search" className="bg-secondary/60 py-14">
