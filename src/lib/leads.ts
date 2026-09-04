@@ -11,6 +11,8 @@ export type LeadType =
   | "finance_enquiry"
   | "insurance_enquiry"
   | "warranty_enquiry"
+  | "sell_car"
+  | "exchange_car"
   | "general_enquiry";
 
 export type Lead = {
