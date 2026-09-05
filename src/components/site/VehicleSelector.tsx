@@ -116,6 +116,8 @@ export function VehicleSelectorFields({
   setBrand,
   setYear,
   priceLabel,
+  showPrice = true,
+  showKm = true,
 }: {
   selection: VehicleSelection;
   set: (key: keyof VehicleSelection) => (v: string) => void;
@@ -123,6 +125,8 @@ export function VehicleSelectorFields({
   setYear: (v: string) => void;
   /** e.g. "Expected Price" for Sell, "Budget" for Exchange. */
   priceLabel: string;
+  showPrice?: boolean;
+  showKm?: boolean;
 }) {
   const year = selection.year === ANY ? undefined : selection.year;
   const brandOptions = brandsForYear(year);
@@ -145,18 +149,22 @@ export function VehicleSelectorFields({
         onChange={set("variant")}
       />
       <SelectField label="Year" value={selection.year} options={YEARS} onChange={setYear} />
-      <SelectField
-        label={priceLabel}
-        value={selection.price}
-        options={PRICE_RANGES.map((p) => p.label)}
-        onChange={set("price")}
-      />
-      <SelectField
-        label="Kilometres"
-        value={selection.km}
-        options={KM_RANGES.map((k) => k.label)}
-        onChange={set("km")}
-      />
+      {showPrice && (
+        <SelectField
+          label={priceLabel}
+          value={selection.price}
+          options={PRICE_RANGES.map((p) => p.label)}
+          onChange={set("price")}
+        />
+      )}
+      {showKm && (
+        <SelectField
+          label="Kilometres"
+          value={selection.km}
+          options={KM_RANGES.map((k) => k.label)}
+          onChange={set("km")}
+        />
+      )}
       <SelectField label="Fuel Type" value={selection.fuel} options={FUELS} onChange={set("fuel")} />
       <SelectField
         label="Transmission"
@@ -168,6 +176,7 @@ export function VehicleSelectorFields({
     </div>
   );
 }
+
 
 export const selectionToFields = (s: VehicleSelection): Record<string, string> => {
   const out: Record<string, string> = {};
