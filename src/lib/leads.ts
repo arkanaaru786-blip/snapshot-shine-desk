@@ -24,8 +24,15 @@ export type Lead = {
   name?: string | undefined;
   mobile?: string | undefined;
   fields?: Record<string, string> | undefined;
+  /** Customer-uploaded car photos (internal evaluation view only). */
+  photos?: import("./uploads").UploadedFile[] | undefined;
+  /** RC / insurance / other supporting documents. */
+  documents?: import("./uploads").UploadedFile[] | undefined;
+  /** Preliminary indicative market estimate, in rupees. */
+  estimate?: { low: number; high: number; confidence: string; notes: string[] } | undefined;
   createdAt: string;
 };
+
 
 const QUEUE_KEY = "mw_lead_queue";
 
