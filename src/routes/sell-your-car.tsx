@@ -47,7 +47,13 @@ type Field = {
 
 const VEHICLE_FIELDS: Field[] = [
   { name: "registration", label: "Registration Number", required: true, placeholder: "MP09 AB 1234" },
-  { name: "currentKm", label: "Current Kilometres", type: "number", required: true, placeholder: "e.g. 45000" },
+  { name: "currentKm", label: "Current Kilometres", type: "number", required: true, placeholder: "e.g. 48500" },
+  {
+    name: "expectedPrice",
+    label: "Expected Selling Price (₹)",
+    type: "number",
+    placeholder: "How much do you expect to get for your car? e.g. 650000",
+  },
   {
     name: "ownership",
     label: "Number of Owners",
@@ -224,6 +230,18 @@ function Page() {
         confidence: result.confidence,
         notes: result.notes,
       },
+      expectation: (() => {
+        const expectedPrice = Number(values["expectedPrice"]);
+        if (!Number.isFinite(expectedPrice) || expectedPrice <= 0) return undefined;
+        const aiMidpoint = Math.round((result.low + result.high) / 2);
+        const gap = expectedPrice - aiMidpoint;
+        return {
+          expectedPrice,
+          aiMidpoint,
+          gap,
+          gapPercent: aiMidpoint ? Math.round((gap / aiMidpoint) * 10000) / 100 : 0,
+        };
+      })(),
     });
 
     setStep(2);

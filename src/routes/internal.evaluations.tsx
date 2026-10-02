@@ -132,6 +132,18 @@ function Page() {
                     )}
                   </Section>
 
+                  <Section title="Expectation Gap">
+                    {l.expectation ? (
+                      <div className="space-y-0.5 text-xs">
+                        <p>Expected Price: <span className="font-semibold">{formatINR(l.expectation.expectedPrice)}</span></p>
+                        <p>AI Midpoint: <span className="font-semibold">{formatINR(l.expectation.aiMidpoint)}</span></p>
+                        <p>Gap: <span className="font-semibold">{formatINR(l.expectation.gap)} ({l.expectation.gapPercent}%)</span></p>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">No expected price given.</p>
+                    )}
+                  </Section>
+
                   <Section title="Vehicle Photos">
                     {l.photos?.length ? (
                       <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-7">
