@@ -30,6 +30,10 @@ export type Lead = {
   documents?: import("./uploads").UploadedFile[] | undefined;
   /** Preliminary indicative market estimate, in rupees. */
   estimate?: { low: number; high: number; confidence: string; notes: string[] } | undefined;
+  /** Internal only: customer expected price vs AI estimate midpoint. */
+  expectation?:
+    | { expectedPrice: number; aiMidpoint: number; gap: number; gapPercent: number }
+    | undefined;
   createdAt: string;
 };
 

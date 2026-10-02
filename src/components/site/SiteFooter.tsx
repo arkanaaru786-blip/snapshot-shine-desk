@@ -16,6 +16,13 @@ const COLUMNS: { title: string; links: { label: string; to: string }[] }[] = [
     title: "Buy & Sell",
     links: [
       { label: "Buy Cars", to: "/cars" },
+      { label: "Buy Bikes", to: "/buy/bikes" },
+      { label: "Buy 3-Wheelers", to: "/buy/three-wheelers" },
+      { label: "Buy SCV", to: "/buy/scv" },
+      { label: "Buy Trucks", to: "/buy/trucks" },
+      { label: "Buy Buses", to: "/buy/buses" },
+      { label: "Buy Tractors", to: "/buy/tractors" },
+      { label: "Buy Taxi", to: "/buy/taxi" },
       { label: "Sell Your Car", to: "/sell-your-car" },
       { label: "Exchange", to: "/exchange" },
       { label: "Finance", to: "/finance" },

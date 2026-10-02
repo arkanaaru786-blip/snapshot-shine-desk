@@ -28,6 +28,13 @@ import { Route as SellYourCarRouteImport } from './routes/sell-your-car'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as WarrantyRouteImport } from './routes/warranty'
 import { Route as WorkshopRouteImport } from './routes/workshop'
+import { Route as BuyBikesRouteImport } from './routes/buy.bikes'
+import { Route as BuyBusesRouteImport } from './routes/buy.buses'
+import { Route as BuyScvRouteImport } from './routes/buy.scv'
+import { Route as BuyTaxiRouteImport } from './routes/buy.taxi'
+import { Route as BuyThreeWheelersRouteImport } from './routes/buy.three-wheelers'
+import { Route as BuyTractorsRouteImport } from './routes/buy.tractors'
+import { Route as BuyTrucksRouteImport } from './routes/buy.trucks'
 import { Route as CarsIndexRouteImport } from './routes/cars.index'
 import { Route as CarsIdRouteImport } from './routes/cars.$id'
 import { Route as FranchiseApplyRouteImport } from './routes/franchise.apply'
@@ -128,6 +135,41 @@ const WorkshopRoute = WorkshopRouteImport.update({
   path: '/workshop',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyBikesRoute = BuyBikesRouteImport.update({
+  id: '/buy/bikes',
+  path: '/buy/bikes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyBusesRoute = BuyBusesRouteImport.update({
+  id: '/buy/buses',
+  path: '/buy/buses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyScvRoute = BuyScvRouteImport.update({
+  id: '/buy/scv',
+  path: '/buy/scv',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyTaxiRoute = BuyTaxiRouteImport.update({
+  id: '/buy/taxi',
+  path: '/buy/taxi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyThreeWheelersRoute = BuyThreeWheelersRouteImport.update({
+  id: '/buy/three-wheelers',
+  path: '/buy/three-wheelers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyTractorsRoute = BuyTractorsRouteImport.update({
+  id: '/buy/tractors',
+  path: '/buy/tractors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyTrucksRoute = BuyTrucksRouteImport.update({
+  id: '/buy/trucks',
+  path: '/buy/trucks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CarsIndexRoute = CarsIndexRouteImport.update({
   id: '/cars/',
   path: '/cars/',
@@ -169,6 +211,13 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/warranty': typeof WarrantyRoute
   '/workshop': typeof WorkshopRoute
+  '/buy/bikes': typeof BuyBikesRoute
+  '/buy/buses': typeof BuyBusesRoute
+  '/buy/scv': typeof BuyScvRoute
+  '/buy/taxi': typeof BuyTaxiRoute
+  '/buy/three-wheelers': typeof BuyThreeWheelersRoute
+  '/buy/tractors': typeof BuyTractorsRoute
+  '/buy/trucks': typeof BuyTrucksRoute
   '/cars/$id': typeof CarsIdRoute
   '/franchise/apply': typeof FranchiseApplyRoute
   '/internal/evaluations': typeof InternalEvaluationsRoute
@@ -194,6 +243,13 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/warranty': typeof WarrantyRoute
   '/workshop': typeof WorkshopRoute
+  '/buy/bikes': typeof BuyBikesRoute
+  '/buy/buses': typeof BuyBusesRoute
+  '/buy/scv': typeof BuyScvRoute
+  '/buy/taxi': typeof BuyTaxiRoute
+  '/buy/three-wheelers': typeof BuyThreeWheelersRoute
+  '/buy/tractors': typeof BuyTractorsRoute
+  '/buy/trucks': typeof BuyTrucksRoute
   '/cars/$id': typeof CarsIdRoute
   '/franchise/apply': typeof FranchiseApplyRoute
   '/internal/evaluations': typeof InternalEvaluationsRoute
@@ -220,6 +276,13 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/warranty': typeof WarrantyRoute
   '/workshop': typeof WorkshopRoute
+  '/buy/bikes': typeof BuyBikesRoute
+  '/buy/buses': typeof BuyBusesRoute
+  '/buy/scv': typeof BuyScvRoute
+  '/buy/taxi': typeof BuyTaxiRoute
+  '/buy/three-wheelers': typeof BuyThreeWheelersRoute
+  '/buy/tractors': typeof BuyTractorsRoute
+  '/buy/trucks': typeof BuyTrucksRoute
   '/cars/$id': typeof CarsIdRoute
   '/franchise/apply': typeof FranchiseApplyRoute
   '/internal/evaluations': typeof InternalEvaluationsRoute
@@ -247,6 +310,13 @@ export interface FileRouteTypes {
     | '/services'
     | '/warranty'
     | '/workshop'
+    | '/buy/bikes'
+    | '/buy/buses'
+    | '/buy/scv'
+    | '/buy/taxi'
+    | '/buy/three-wheelers'
+    | '/buy/tractors'
+    | '/buy/trucks'
     | '/cars/$id'
     | '/franchise/apply'
     | '/internal/evaluations'
@@ -272,6 +342,13 @@ export interface FileRouteTypes {
     | '/services'
     | '/warranty'
     | '/workshop'
+    | '/buy/bikes'
+    | '/buy/buses'
+    | '/buy/scv'
+    | '/buy/taxi'
+    | '/buy/three-wheelers'
+    | '/buy/tractors'
+    | '/buy/trucks'
     | '/cars/$id'
     | '/franchise/apply'
     | '/internal/evaluations'
@@ -297,6 +374,13 @@ export interface FileRouteTypes {
     | '/services'
     | '/warranty'
     | '/workshop'
+    | '/buy/bikes'
+    | '/buy/buses'
+    | '/buy/scv'
+    | '/buy/taxi'
+    | '/buy/three-wheelers'
+    | '/buy/tractors'
+    | '/buy/trucks'
     | '/cars/$id'
     | '/franchise/apply'
     | '/internal/evaluations'
@@ -323,6 +407,13 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   WarrantyRoute: typeof WarrantyRoute
   WorkshopRoute: typeof WorkshopRoute
+  BuyBikesRoute: typeof BuyBikesRoute
+  BuyBusesRoute: typeof BuyBusesRoute
+  BuyScvRoute: typeof BuyScvRoute
+  BuyTaxiRoute: typeof BuyTaxiRoute
+  BuyThreeWheelersRoute: typeof BuyThreeWheelersRoute
+  BuyTractorsRoute: typeof BuyTractorsRoute
+  BuyTrucksRoute: typeof BuyTrucksRoute
   CarsIdRoute: typeof CarsIdRoute
   InternalEvaluationsRoute: typeof InternalEvaluationsRoute
   CarsIndexRoute: typeof CarsIndexRoute
@@ -463,6 +554,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkshopRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buy/bikes': {
+      id: '/buy/bikes'
+      path: '/buy/bikes'
+      fullPath: '/buy/bikes'
+      preLoaderRoute: typeof BuyBikesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buy/buses': {
+      id: '/buy/buses'
+      path: '/buy/buses'
+      fullPath: '/buy/buses'
+      preLoaderRoute: typeof BuyBusesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buy/scv': {
+      id: '/buy/scv'
+      path: '/buy/scv'
+      fullPath: '/buy/scv'
+      preLoaderRoute: typeof BuyScvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buy/taxi': {
+      id: '/buy/taxi'
+      path: '/buy/taxi'
+      fullPath: '/buy/taxi'
+      preLoaderRoute: typeof BuyTaxiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buy/three-wheelers': {
+      id: '/buy/three-wheelers'
+      path: '/buy/three-wheelers'
+      fullPath: '/buy/three-wheelers'
+      preLoaderRoute: typeof BuyThreeWheelersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buy/tractors': {
+      id: '/buy/tractors'
+      path: '/buy/tractors'
+      fullPath: '/buy/tractors'
+      preLoaderRoute: typeof BuyTractorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buy/trucks': {
+      id: '/buy/trucks'
+      path: '/buy/trucks'
+      fullPath: '/buy/trucks'
+      preLoaderRoute: typeof BuyTrucksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cars/': {
       id: '/cars/'
       path: '/cars'
@@ -526,6 +666,13 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   WarrantyRoute: WarrantyRoute,
   WorkshopRoute: WorkshopRoute,
+  BuyBikesRoute: BuyBikesRoute,
+  BuyBusesRoute: BuyBusesRoute,
+  BuyScvRoute: BuyScvRoute,
+  BuyTaxiRoute: BuyTaxiRoute,
+  BuyThreeWheelersRoute: BuyThreeWheelersRoute,
+  BuyTractorsRoute: BuyTractorsRoute,
+  BuyTrucksRoute: BuyTrucksRoute,
   CarsIdRoute: CarsIdRoute,
   InternalEvaluationsRoute: InternalEvaluationsRoute,
   CarsIndexRoute: CarsIndexRoute,
