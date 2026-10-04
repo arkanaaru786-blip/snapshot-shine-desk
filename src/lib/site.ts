@@ -19,6 +19,17 @@ export const MAIN_NAV = [
   { label: "Contact", to: "/contact" },
 ] as const;
 
+export const BUY_CATEGORIES = [
+  { label: "Cars", to: "/cars", blurb: "Hatchbacks, sedans & SUVs" },
+  { label: "Bikes", to: "/buy/bikes", blurb: "Motorcycles & scooters" },
+  { label: "3-Wheelers", to: "/buy/three-wheelers", blurb: "Autos & e-rickshaws" },
+  { label: "SCV", to: "/buy/scv", blurb: "Small commercial vehicles" },
+  { label: "Trucks", to: "/buy/trucks", blurb: "Light to heavy trucks" },
+  { label: "Buses", to: "/buy/buses", blurb: "School, staff & tourist" },
+  { label: "Tractors", to: "/buy/tractors", blurb: "Farm tractors" },
+  { label: "Taxi", to: "/buy/taxi", blurb: "Commercial cars" },
+] as const;
+
 export const SERVICE_LINKS = [
   { label: "Inspection", to: "/inspection" },
   { label: "Insurance", to: "/insurance" },

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, Menu, MessageCircle, Phone, X } from "lucide-react";
-import { MAIN_NAV, PHONE_DISPLAY, PHONE_HREF, SERVICE_LINKS, WHATSAPP } from "@/lib/site";
+import { ChevronDown, ChevronRight, Menu, MessageCircle, Phone, X } from "lucide-react";
+import { BUY_CATEGORIES, MAIN_NAV, PHONE_DISPLAY, PHONE_HREF, SERVICE_LINKS, WHATSAPP } from "@/lib/site";
 
 const MOBILE_PRIMARY = [
   { label: "Buy Cars", to: "/cars" },
@@ -40,17 +40,42 @@ export function SiteHeader() {
         </Link>
 
         <nav className="ml-auto hidden items-center gap-5 xl:flex">
-          {MAIN_NAV.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              activeProps={{ className: "border-b-2 border-primary pb-1 text-ink-foreground" }}
-              inactiveProps={{ className: "text-ink-foreground/80" }}
-              className="font-sans text-[0.72rem] font-semibold uppercase tracking-[0.08em] transition-colors hover:text-primary"
-            >
-              {item.label}
-            </Link>
-          ))}
+          {MAIN_NAV.map((item) =>
+            item.to === "/cars" ? (
+              <div key="buy" className="group relative">
+                <Link
+                  to="/cars"
+                  className="flex items-center gap-1 font-sans text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-ink-foreground/80 transition-colors hover:text-primary"
+                >
+                  Buy <ChevronDown className="h-3 w-3" />
+                </Link>
+                <div className="invisible absolute left-0 top-full z-50 pt-3 opacity-0 transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                  <ul className="w-60 border border-ink-foreground/10 bg-ink py-2 shadow-lg">
+                    {BUY_CATEGORIES.map((c) => (
+                      <li key={c.to}>
+                        <Link
+                          to={c.to}
+                          className="block px-4 py-2 text-xs font-semibold uppercase tracking-wide text-ink-foreground/85 hover:bg-primary hover:text-primary-foreground"
+                        >
+                          Buy {c.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ) : (
+              <Link
+                key={item.to}
+                to={item.to}
+                activeProps={{ className: "border-b-2 border-primary pb-1 text-ink-foreground" }}
+                inactiveProps={{ className: "text-ink-foreground/80" }}
+                className="font-sans text-[0.72rem] font-semibold uppercase tracking-[0.08em] transition-colors hover:text-primary"
+              >
+                {item.label}
+              </Link>
+            ),
+          )}
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3 xl:ml-6">
@@ -98,6 +123,23 @@ export function SiteHeader() {
                 >
                   {item.label}
                   <ChevronRight className="h-4 w-4 text-primary" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-5 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-primary">
+            Buy Vehicles
+          </p>
+          <ul className="mt-2 grid grid-cols-2 gap-x-4">
+            {BUY_CATEGORIES.map((item) => (
+              <li key={item.to}>
+                <Link
+                  to={item.to}
+                  onClick={close}
+                  className="block border-b border-ink-foreground/10 py-2.5 text-xs font-semibold uppercase tracking-wide text-ink-foreground/85"
+                >
+                  {item.label}
                 </Link>
               </li>
             ))}
