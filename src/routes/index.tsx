@@ -14,6 +14,7 @@ import { UnderOneRoof } from "@/components/site/UnderOneRoof";
 import { FinalCTA } from "@/components/site/FinalCTA";
 import { StickyActions } from "@/components/site/StickyActions";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { BrowseCategories } from "@/components/site/BrowseCategories";
 
 const TITLE = "Motor Wallah | Certified Pre-Owned Cars in Indore, MP";
 const DESCRIPTION =
@@ -39,6 +40,7 @@ function Index() {
       <SiteHeader />
       <main>
         <Hero />
+        <BrowseCategories />
         <QuickActions />
         <CarSearch />
         <FeaturedCars />
