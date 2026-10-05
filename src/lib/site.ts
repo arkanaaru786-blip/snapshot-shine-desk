@@ -9,14 +9,14 @@ export function whatsappLink(message: string) {
 export const WHATSAPP = whatsappLink("Hi Motor Wallah, I need help with a car");
 
 export const MAIN_NAV = [
-  { label: "Buy Cars", to: "/cars" },
-  { label: "Sell Your Car", to: "/sell-your-car" },
+  { label: "Buy", to: "/cars" },
+  { label: "Sell", to: "/sell-your-car" },
   { label: "Exchange", to: "/exchange" },
-  { label: "Finance", to: "/finance" },
-  { label: "Services", to: "/services" },
+  { label: "Value", to: "/sell-your-car" },
+  { label: "Compare", to: "/cars" },
+  { label: "Service", to: "/services" },
+  { label: "Scrap", to: "/contact" },
   { label: "Franchise", to: "/franchise" },
-  { label: "About Us", to: "/about" },
-  { label: "Contact", to: "/contact" },
 ] as const;
 
 export const BUY_CATEGORIES = [
@@ -27,7 +27,7 @@ export const BUY_CATEGORIES = [
   { label: "Trucks", to: "/buy/trucks", blurb: "Light to heavy trucks" },
   { label: "Buses", to: "/buy/buses", blurb: "School, staff & tourist" },
   { label: "Tractors", to: "/buy/tractors", blurb: "Farm tractors" },
-  { label: "Taxi", to: "/buy/taxi", blurb: "Commercial cars" },
+  { label: "Taxi / Commercial", to: "/buy/taxi", blurb: "Commercial cars" },
 ] as const;
 
 export const SERVICE_LINKS = [

@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep the homepage marketplace assembled from focused reusable site components; this preserves the finalized vehicle flows while homepage presentation evolves.
