@@ -36,7 +36,7 @@ export function SiteHeader() {
               </div>
             ) : (
               <Link
-                key={item.to}
+                key={item.label}
                 to={item.to}
                 activeProps={{ className: "border-b-2 border-primary pb-1 text-ink-foreground" }}
                 inactiveProps={{ className: "text-ink-foreground/80" }}

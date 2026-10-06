@@ -1,32 +1,15 @@
 import { Link } from "@tanstack/react-router";
-import { Mail, MapPin, Phone } from "lucide-react";
-import { PHONE_DISPLAY, PHONE_HREF, WHATSAPP } from "@/lib/site";
+import { Facebook, Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
+import { BUY_CATEGORIES, MAIN_NAV, PHONE_DISPLAY, PHONE_HREF, WHATSAPP } from "@/lib/site";
 
 const COLUMNS: { title: string; links: { label: string; to: string }[] }[] = [
   {
-    title: "Company",
-    links: [
-      { label: "About Us", to: "/about" },
-      { label: "Franchise", to: "/franchise" },
-      { label: "Careers", to: "/careers" },
-      { label: "Contact", to: "/contact" },
-    ],
+    title: "Quick Links",
+    links: [...MAIN_NAV],
   },
   {
-    title: "Buy & Sell",
-    links: [
-      { label: "Buy Cars", to: "/cars" },
-      { label: "Buy Bikes", to: "/buy/bikes" },
-      { label: "Buy 3-Wheelers", to: "/buy/three-wheelers" },
-      { label: "Buy SCV", to: "/buy/scv" },
-      { label: "Buy Trucks", to: "/buy/trucks" },
-      { label: "Buy Buses", to: "/buy/buses" },
-      { label: "Buy Tractors", to: "/buy/tractors" },
-      { label: "Buy Taxi", to: "/buy/taxi" },
-      { label: "Sell Your Car", to: "/sell-your-car" },
-      { label: "Exchange", to: "/exchange" },
-      { label: "Finance", to: "/finance" },
-    ],
+    title: "Vehicle Categories",
+    links: [...BUY_CATEGORIES],
   },
   {
     title: "Services",
@@ -63,8 +46,7 @@ export function SiteFooter() {
             Drive Trust. Drive Quality.
           </p>
           <p className="mt-4 max-w-xs text-sm text-ink-foreground/70">
-            Certified pre-owned cars from Indore, Madhya Pradesh — buying, selling, exchange,
-            finance assistance and complete car care.
+            One marketplace to discover, buy, sell, exchange, value and service every kind of vehicle.
           </p>
         </div>
 
@@ -95,6 +77,13 @@ export function SiteFooter() {
                 </li>
               )}
             </ul>
+            {col.title === "Support" && (
+              <div className="mt-5 flex gap-2">
+                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="grid h-9 w-9 place-items-center border border-ink-foreground/20 hover:border-primary hover:text-primary"><Instagram className="h-4 w-4" /></a>
+                <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="grid h-9 w-9 place-items-center border border-ink-foreground/20 hover:border-primary hover:text-primary"><Facebook className="h-4 w-4" /></a>
+                <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="grid h-9 w-9 place-items-center border border-ink-foreground/20 hover:border-primary hover:text-primary"><Youtube className="h-4 w-4" /></a>
+              </div>
+            )}
           </div>
         ))}
       </div>
