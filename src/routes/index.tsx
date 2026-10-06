@@ -1,24 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { Hero } from "@/components/site/Hero";
-import { QuickActions } from "@/components/site/QuickActions";
-import { CarSearch } from "@/components/site/CarSearch";
-import { FeaturedCars } from "@/components/site/FeaturedCars";
-import { WhyChoose } from "@/components/site/WhyChoose";
-import { HowItWorks } from "@/components/site/HowItWorks";
-import { SellExchange } from "@/components/site/SellExchange";
-import { Services } from "@/components/site/Services";
-import { FranchiseCTA } from "@/components/site/FranchiseCTA";
-import { Locations } from "@/components/site/Locations";
-import { UnderOneRoof } from "@/components/site/UnderOneRoof";
-import { FinalCTA } from "@/components/site/FinalCTA";
 import { StickyActions } from "@/components/site/StickyActions";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { BrowseCategories } from "@/components/site/BrowseCategories";
+import { BusinessSpotlight, FranchiseBanner, MarketplaceActions, PopularVehicles, TrustStrip } from "@/components/site/HomeMarketplaceSections";
 
-const TITLE = "Motor Wallah | Certified Pre-Owned Cars in Indore, MP";
+const TITLE = "Motor Wallah | Every Vehicle. One Marketplace.";
 const DESCRIPTION =
-  "Buy, sell, exchange, finance and service certified pre-owned cars with Motor Wallah, Indore — 150+ point vehicle inspection and transparent pricing.";
+  "Discover, buy, sell, exchange, value and service cars, bikes, 3-wheelers, commercial vehicles and tractors with Motor Wallah.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -41,17 +31,12 @@ function Index() {
       <main>
         <Hero />
         <BrowseCategories />
-        <QuickActions />
-        <CarSearch />
-        <FeaturedCars />
-        <WhyChoose />
-        <HowItWorks />
-        <SellExchange />
-        <Services />
-        <FranchiseCTA />
-        <Locations />
-        <UnderOneRoof />
-        <FinalCTA />
+        <FranchiseBanner />
+        <BusinessSpotlight />
+        <PopularVehicles />
+        <MarketplaceActions />
+        <TrustStrip />
+        <FranchiseBanner compact />
       </main>
       <SiteFooter />
       <StickyActions />

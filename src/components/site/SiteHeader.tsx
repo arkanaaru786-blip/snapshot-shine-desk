@@ -11,7 +11,7 @@ export function SiteHeader() {
         <BrandLogo />
         <nav className="ml-auto hidden items-center gap-4 xl:flex">
           {MAIN_NAV.map((item) =>
-            item.to === "/cars" ? (
+            item.label === "Buy" ? (
               <div key="buy" className="group relative">
                 <Link
                   to="/cars"
