@@ -11,7 +11,7 @@ export function SiteHeader() {
         <BrandLogo />
         <nav className="ml-auto hidden items-center gap-4 xl:flex">
           {MAIN_NAV.map((item) =>
-            item.to === "/cars" ? (
+            item.label === "Buy" ? (
               <div key="buy" className="group relative">
                 <Link
                   to="/cars"
@@ -36,7 +36,7 @@ export function SiteHeader() {
               </div>
             ) : (
               <Link
-                key={item.to}
+                key={item.label}
                 to={item.to}
                 activeProps={{ className: "border-b-2 border-primary pb-1 text-ink-foreground" }}
                 inactiveProps={{ className: "text-ink-foreground/80" }}

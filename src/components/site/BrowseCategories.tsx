@@ -1,35 +1,33 @@
 import { Link } from "@tanstack/react-router";
-import { Bike, Bus, Car, CarTaxiFront, ChevronRight, Tractor, Truck, Caravan, Package } from "lucide-react";
 import { BUY_CATEGORIES } from "@/lib/site";
+import cars from "@/assets/categories/cars.jpg";
+import bikes from "@/assets/categories/bikes.jpg";
+import threeWheelers from "@/assets/categories/three-wheelers.jpg";
+import scv from "@/assets/categories/scv.jpg";
+import trucks from "@/assets/categories/trucks.jpg";
+import buses from "@/assets/categories/buses.jpg";
+import tractors from "@/assets/categories/tractors.jpg";
+import taxi from "@/assets/categories/taxi.jpg";
 
-const ICONS = [Car, Bike, Caravan, Package, Truck, Bus, Tractor, CarTaxiFront];
+const IMAGES = [cars, bikes, threeWheelers, scv, trucks, buses, tractors, taxi];
 
 export function BrowseCategories() {
   return (
-    <section className="bg-background py-12 lg:py-16">
+    <section className="bg-background py-10 lg:py-14">
       <div className="mx-auto max-w-[1600px] px-4 lg:px-8">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Browse by Category</p>
-        <h2 className="mt-2 font-display text-3xl font-bold uppercase tracking-wide text-foreground lg:text-4xl">
-          Find Your Vehicle
-        </h2>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
+        <h2 className="section-title text-left">Explore Vehicles</h2>
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
           {BUY_CATEGORIES.map((c, i) => {
-            const Icon = ICONS[i] ?? Car;
+            const image = IMAGES[i] ?? cars;
             return (
               <Link
                 key={c.to}
                 to={c.to}
-                className="group flex flex-col gap-3 border border-border bg-card p-4 transition-colors hover:border-primary lg:p-5"
+                className="group overflow-hidden rounded-sm border border-border bg-card shadow-sm transition-all hover:-translate-y-1 hover:border-primary hover:shadow-panel"
               >
-                <span className="grid h-12 w-12 place-items-center rounded-full bg-ink text-ink-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  <Icon className="h-6 w-6" />
-                </span>
-                <span>
-                  <span className="flex items-center justify-between font-display text-lg font-bold uppercase text-card-foreground">
-                    {c.label}
-                    <ChevronRight className="h-4 w-4 text-primary" />
-                  </span>
-                  <span className="block text-xs text-muted-foreground">{c.blurb}</span>
+                <img src={image} alt={`${c.label} marketplace category`} width={720} height={450} loading="lazy" className="aspect-[8/5] w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                <span className="block border-t border-border px-2 py-3 text-center font-display text-sm font-bold uppercase text-card-foreground group-hover:text-primary">
+                  {c.label}
                 </span>
               </Link>
             );
