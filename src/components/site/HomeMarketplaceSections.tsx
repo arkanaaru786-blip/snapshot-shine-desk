@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { BadgeCheck, Building2, ChevronRight, FileCheck2, Handshake, IndianRupee, MapPin, ShieldCheck, Umbrella } from "lucide-react";
+import { ArrowLeftRight, ArrowRight, BadgeCheck, Building2, Calculator, ChevronRight, FileCheck2, GitCompareArrows, Handshake, IndianRupee, MapPin, Recycle, ShieldCheck, ShoppingBag, Store, Umbrella, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { VEHICLES, formatPrice, formatKm } from "@/lib/cars-data";
+import { CATEGORIES, CATEGORY_LISTINGS } from "@/lib/vehicle-categories";
 import franchiseShowroom from "@/assets/franchise-showroom.jpg";
 import businessSpotlight from "@/assets/business-spotlight.jpg";
 import carImage from "@/assets/categories/cars.jpg";
@@ -12,20 +14,19 @@ import busImage from "@/assets/categories/buses.jpg";
 import tractorImage from "@/assets/categories/tractors.jpg";
 import taxiImage from "@/assets/categories/taxi.jpg";
 
+const CATEGORY_IMAGES = [bikeImage, threeWheelImage, scvImage, truckImage, busImage, tractorImage, taxiImage];
+const car = VEHICLES.find((vehicle) => vehicle.status === "Available");
 const LISTINGS = [
-  { name: "Maruti Suzuki Swift", variant: "VXI", year: 2021, fuel: "Petrol", km: "32,000 km", place: "Indore", price: "₹6.45 Lakh", image: carImage, to: "/cars", badge: "Inspected" },
-  { name: "Royal Enfield Classic 350", variant: "Redditch", year: 2022, fuel: "Petrol", km: "8,200 km", place: "Indore", price: "₹1.85 Lakh", image: bikeImage, to: "/buy/bikes", badge: "Verified" },
-  { name: "Mahindra Alfa Plus", variant: "Passenger", year: 2021, fuel: "CNG", km: "28,000 km", place: "Indore", price: "₹1.95 Lakh", image: threeWheelImage, to: "/buy/three-wheelers", badge: "Inspected" },
-  { name: "Tata Ace Gold", variant: "Diesel", year: 2021, fuel: "Diesel", km: "41,000 km", place: "Indore", price: "₹4.65 Lakh", image: scvImage, to: "/buy/scv", badge: "Verified" },
-  { name: "Ashok Leyland 1616", variant: "BS6", year: 2020, fuel: "Diesel", km: "1,18,000 km", place: "Dewas", price: "₹16.80 Lakh", image: truckImage, to: "/buy/trucks", badge: "Inspected" },
-  { name: "Tata Starbus", variant: "Executive", year: 2019, fuel: "Diesel", km: "82,000 km", place: "Bhopal", price: "₹24.90 Lakh", image: busImage, to: "/buy/buses", badge: "Verified" },
-  { name: "Sonalika DI 745 III", variant: "50 HP", year: 2021, fuel: "Diesel", km: "1,675 hrs", place: "Indore", price: "₹6.75 Lakh", image: tractorImage, to: "/buy/tractors", badge: "Inspected" },
-  { name: "Maruti Suzuki Dzire", variant: "Tour S CNG", year: 2022, fuel: "CNG", km: "45,000 km", place: "Indore", price: "₹6.75 Lakh", image: taxiImage, to: "/buy/taxi", badge: "Verified" },
-] as const;
+  ...(car ? [{ name: `${car.make} ${car.model}`, variant: car.variant, year: car.year, fuel: car.fuel, km: formatKm(car.kilometres), place: car.location, price: formatPrice(car.price), image: car.images[0] ?? carImage, to: "/cars/$id", slug: car.slug, badge: "Demo listing" }] : []),
+  ...CATEGORIES.flatMap((category, index) => {
+    const listing = CATEGORY_LISTINGS.find((item) => item.category === category.id);
+    return listing ? [{ name: `${listing.brand.replace(/\s*\([^)]*\)/g, "")} ${listing.model}`, variant: category.title, year: listing.year, fuel: listing.fuel, km: formatKm(listing.kilometres), place: listing.location, price: formatPrice(listing.price), image: CATEGORY_IMAGES[index] ?? carImage, to: category.to, slug: undefined, badge: "Demo listing" }] : [];
+  }),
+];
 
 const ACTIONS = [
-  { label: "Buy", to: "/cars" }, { label: "Sell", to: "/sell-your-car" }, { label: "Exchange", to: "/exchange" },
-  { label: "Value", to: "/sell-your-car" }, { label: "Compare", to: "/cars" }, { label: "Service", to: "/services" }, { label: "Scrap", to: "/contact" },
+  { label: "Buy", to: "/cars", icon: ShoppingBag, text: "Find your next ride" }, { label: "Sell", to: "/sell-your-car", icon: Store, text: "Get the best value" }, { label: "Exchange", to: "/exchange", icon: ArrowLeftRight, text: "Upgrade easily" },
+  { label: "Value", to: "/sell-your-car", icon: Calculator, text: "Know your worth" }, { label: "Compare", to: "/cars", icon: GitCompareArrows, text: "Make the right choice" }, { label: "Service", to: "/services", icon: Wrench, text: "Keep it running" }, { label: "Scrap", to: "/contact", icon: Recycle, text: "Turn old into value" },
 ] as const;
 
 const TRUST = [
@@ -39,7 +40,7 @@ const TRUST = [
 
 export function FranchiseBanner({ compact = false }: { compact?: boolean }) {
   return (
-    <section className={compact ? "bg-background py-5" : "bg-background pb-4"}>
+    <section className={compact ? "home-franchise home-franchise-lower" : "home-franchise"}>
       <div className="mx-auto max-w-[1600px] px-4 lg:px-8">
         <div className={`relative isolate overflow-hidden rounded-sm bg-ink text-ink-foreground ${compact ? "min-h-40" : "min-h-52 sm:min-h-64"}`}>
           <img src={franchiseShowroom} alt="Premium automotive franchise showroom" width={1920} height={720} loading="lazy" className="absolute inset-0 h-full w-full object-cover object-center" />
@@ -58,7 +59,7 @@ export function FranchiseBanner({ compact = false }: { compact?: boolean }) {
 
 export function BusinessSpotlight() {
   return (
-    <section className="bg-background py-4">
+    <section className="home-spotlight">
       <div className="mx-auto max-w-[1600px] px-4 lg:px-8">
         <div className="grid overflow-hidden rounded-sm border border-border bg-card shadow-sm sm:grid-cols-[15rem_minmax(0,1fr)_auto] sm:items-center">
           <img src={businessSpotlight} alt="ABC Auto Care workshop" width={1280} height={720} loading="lazy" className="h-40 w-full object-cover sm:h-full" />
@@ -80,13 +81,13 @@ export function BusinessSpotlight() {
 
 export function PopularVehicles() {
   return (
-    <section className="bg-background py-10">
+    <section className="home-popular bg-background">
       <div className="mx-auto max-w-[1600px] px-4 lg:px-8">
-        <div className="flex items-end justify-between gap-4"><h2 className="section-title text-left">Popular Vehicles</h2><span className="text-[0.6rem] font-bold uppercase text-muted-foreground">Demo listings</span></div>
-        <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-8">
+        <div className="home-section-heading"><div><h2>Popular <span>Vehicles</span></h2><p>Top picks from our marketplace · Demo listings</p></div><Link to="/cars">View all <ArrowRight size={14} /></Link></div>
+        <div className="home-listing-grid">
           {LISTINGS.map((item) => (
-            <article key={item.name} className="flex min-w-0 flex-col overflow-hidden rounded-sm border border-border bg-card shadow-sm">
-              <div className="relative"><img src={item.image} alt={item.name} width={720} height={450} loading="lazy" className="aspect-[8/5] w-full object-cover" /><span className="absolute left-2 top-2 bg-ink px-2 py-1 text-[0.5rem] font-bold uppercase text-ink-foreground">{item.badge}</span></div>
+            <article key={item.name} className="home-listing-card flex min-w-0 flex-col overflow-hidden rounded-sm border border-border bg-card shadow-sm">
+              <div className={`home-listing-image ${item.slug ? "" : "home-category-preview"}`}><img src={item.image} alt={item.slug ? item.name : `${item.variant} illustrative category image`} width={720} height={450} loading="lazy" /><span className="home-demo-badge">{item.badge}</span></div>
               <div className="flex flex-1 flex-col p-3">
                 <p className="truncate text-[0.55rem] font-bold uppercase text-primary">{item.name.split(" ")[0]}</p>
                 <h3 className="mt-0.5 min-h-9 text-xs font-bold leading-tight normal-case">{item.name}</h3>
@@ -94,12 +95,11 @@ export function PopularVehicles() {
                 <p className="mt-2 text-[0.6rem] text-muted-foreground">{item.year} · {item.fuel}</p>
                 <p className="mt-1 text-[0.6rem] text-muted-foreground">{item.km} · {item.place}</p>
                 <p className="mt-2 font-display text-base font-bold text-primary">{item.price}</p>
-                <Link to={item.to} className="mt-auto flex items-center justify-center border border-primary px-2 py-2 text-[0.55rem] font-bold uppercase text-primary hover:bg-primary hover:text-primary-foreground">View Details</Link>
+                <Button asChild size="sm" className="home-listing-button mt-auto"><Link to={item.to} params={item.slug ? { id: item.slug } : undefined}>View Details <ArrowRight size={12} /></Link></Button>
               </div>
             </article>
           ))}
         </div>
-        <div className="mt-6 text-center"><Button asChild variant="outline" className="rounded-sm text-xs font-bold uppercase"><Link to="/cars">View All Vehicles <ChevronRight /></Link></Button></div>
       </div>
     </section>
   );
@@ -107,11 +107,11 @@ export function PopularVehicles() {
 
 export function MarketplaceActions() {
   return (
-    <section className="bg-secondary/60 py-10">
+    <section className="home-action-section">
       <div className="mx-auto max-w-[1200px] px-4 lg:px-8">
-        <h2 className="section-title">What Do You Want To Do?</h2>
-        <div className="mt-6 grid grid-cols-4 gap-2 sm:grid-cols-7">
-          {ACTIONS.map((item) => <Link key={item.label} to={item.to} className="flex min-h-20 items-center justify-center rounded-sm border border-border bg-card px-2 text-center font-display text-xs font-bold uppercase transition-colors hover:border-primary hover:text-primary">{item.label}</Link>)}
+        <div className="home-action-intro"><h2>What Do You Want To Do?</h2><p>Quick actions for your automotive journey</p></div>
+        <div className="home-action-options">
+          {ACTIONS.map(({ icon: Icon, ...item }) => <Link key={item.label} to={item.to}><Icon size={23} /><span><strong>{item.label}</strong><small>{item.text}</small></span></Link>)}
         </div>
       </div>
     </section>
@@ -120,9 +120,9 @@ export function MarketplaceActions() {
 
 export function TrustStrip() {
   return (
-    <section className="bg-background py-10">
+    <section className="home-trust bg-background">
       <div className="mx-auto max-w-[1400px] px-4 lg:px-8">
-        <h2 className="section-title">Why Motor Wallah</h2>
+        <div className="home-section-heading"><div><h2>Why Motor <span>Wallah</span></h2><p>More than just a marketplace — we build trust.</p></div></div>
         <div className="mt-7 grid grid-cols-2 gap-x-4 gap-y-7 lg:grid-cols-6">
           {TRUST.map(({ icon: Icon, title, text }) => <div key={title} className="text-center"><Icon className="mx-auto h-7 w-7 text-primary" strokeWidth={1.5} /><h3 className="mt-3 text-xs font-bold uppercase">{title}</h3><p className="mt-1 text-[0.68rem] leading-relaxed text-muted-foreground">{text}</p></div>)}
         </div>

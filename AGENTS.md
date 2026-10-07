@@ -10,3 +10,6 @@
 <!-- LOVABLE:END -->
 
 - Keep the homepage marketplace assembled from focused reusable site components; this preserves the finalized vehicle flows while homepage presentation evolves.
+- Scope homepage restyling under `.mw-home` and opt shared header/logo into homepage presentation; other routes must retain their finalized appearance.
+- Homepage popular vehicles derive from existing car and category listing datasets, with illustrative category images and demo labels; avoid divergent inventory or fabricated verification claims.
+- Use replaceable text brand wordmarks in existing homepage category components until official logo assets are supplied; no separate asset-management subsystem is needed.
