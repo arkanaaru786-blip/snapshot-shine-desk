@@ -1,15 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, MapPin, UserRound } from "lucide-react";
+import { Heart, MapPin, UserRound, ShoppingBag, Store, ArrowLeftRight, Calculator, GitCompareArrows, Wrench, Recycle } from "lucide-react";
 import { BUY_CATEGORIES, MAIN_NAV } from "@/lib/site";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { Button } from "@/components/ui/button";
 
-export function SiteHeader() {
+const NAV_ICONS = [ShoppingBag, Store, ArrowLeftRight, Calculator, GitCompareArrows, Wrench, Recycle, Store];
+
+export function SiteHeader({ homepage = false }: { homepage?: boolean }) {
   return (
     <header className="sticky top-0 z-50 border-b border-ink-foreground/10 bg-ink text-ink-foreground">
       <div className="mx-auto grid max-w-[1600px] grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2.5 lg:px-8 xl:flex">
-        <BrandLogo />
-        <nav className="ml-auto hidden items-center gap-4 xl:flex">
+        <BrandLogo homepage={homepage} />
+        <nav className={`ml-auto hidden items-center gap-4 ${homepage ? "" : "xl:flex"}`}>
           {MAIN_NAV.map((item) =>
             item.label === "Buy" ? (
               <div key="buy" className="group relative">
@@ -63,12 +65,14 @@ export function SiteHeader() {
           </Button>
         </div>
       </div>
-      <nav aria-label="Primary navigation" className="scrollbar-none flex overflow-x-auto border-t border-ink-foreground/10 px-3 xl:hidden">
-        {MAIN_NAV.map((item) => (
+      <nav aria-label="Primary navigation" className={`scrollbar-none flex overflow-x-auto border-t border-ink-foreground/10 px-3 ${homepage ? "home-primary-rail" : "xl:hidden"}`}>
+        {MAIN_NAV.map((item, index) => {
+          const Icon = NAV_ICONS[index] ?? Store;
+          return (
           <Link key={`${item.label}-${item.to}`} to={item.to} className="shrink-0 px-3 py-2 text-[0.62rem] font-bold uppercase text-ink-foreground/80 hover:text-primary">
-            {item.label}
+            {homepage && <Icon size={17} />} {item.label}
           </Link>
-        ))}
+        );})}
       </nav>
     </header>
   );
