@@ -95,7 +95,7 @@ export function PopularVehicles() {
                 <p className="mt-2 text-[0.6rem] text-muted-foreground">{item.year} · {item.fuel}</p>
                 <p className="mt-1 text-[0.6rem] text-muted-foreground">{item.km} · {item.place}</p>
                 <p className="mt-2 font-display text-base font-bold text-primary">{item.price}</p>
-                <Button asChild size="sm" className="home-listing-button mt-auto"><Link to={item.to} params={item.slug ? { id: item.slug } : undefined}>View Details <ArrowRight size={12} /></Link></Button>
+                <Button asChild size="sm" className="home-listing-button mt-auto">{item.slug ? <Link to="/cars/$id" params={{ id: item.slug }}>View Details <ArrowRight size={12} /></Link> : <Link to={item.to}>View Details <ArrowRight size={12} /></Link>}</Button>
               </div>
             </article>
           ))}
