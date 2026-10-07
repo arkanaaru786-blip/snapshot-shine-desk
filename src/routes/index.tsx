@@ -26,13 +26,12 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div id="top" className="min-h-screen bg-background pb-16 md:pb-0">
-      <SiteHeader />
+    <div id="top" className="mw-home min-h-screen bg-background pb-16 md:pb-0">
+      <SiteHeader homepage />
       <main>
         <Hero />
         <BrowseCategories />
-        <FranchiseBanner />
-        <BusinessSpotlight />
+        <div className="home-promotions home-container"><FranchiseBanner /><BusinessSpotlight /></div>
         <PopularVehicles />
         <MarketplaceActions />
         <TrustStrip />
