@@ -207,6 +207,7 @@
 .home-brand-rail { display: flex; align-items: stretch; overflow-x: auto; scrollbar-width: none; min-height: 62px; max-width: 1376px; margin-inline: auto; background: var(--background); color: var(--foreground); }
 .home-brand-wordmark { display: flex; align-items: center; justify-content: center; flex: 1 0 auto; min-width: 72px; padding: 10px; border-right: 1px solid var(--border); font-size: 10px; font-weight: 800; text-align: center; text-transform: uppercase; line-height: 1.1; }
 .home-brand-wordmark img { width: 66px; height: 34px; object-fit: contain; }
+.home-brand-wordmark:first-child img { width: 92px; }
 .home-brand-wordmark:hover, .home-brand-all:hover { color: var(--primary); }
 .home-brand-all { display: flex; gap: 6px; align-items: center; white-space: nowrap; padding: 12px; font-size: 11px; font-weight: 600; }
 .home-brand-all svg { color: var(--primary); }
@@ -229,7 +230,11 @@
 .home-category-wordmark { max-width: 28%; font-size: 9px; font-weight: 800; text-transform: uppercase; line-height: 1.1; text-align: center; color: var(--foreground); }
 .home-category-wordmark:nth-child(even) { color: var(--primary); }
 .home-category-wordmark img { width: 52px; max-width: 100%; height: 23px; object-fit: contain; }
+.home-category-wordmark:has(img[alt="Maruti Suzuki logo"]) { max-width: 38%; }
+.home-category-wordmark img[alt="Maruti Suzuki logo"] { width: 88px; }
 .home-image-placeholder { display: grid; place-items: center; width: 100%; height: 100%; background: var(--muted); color: var(--muted-foreground); font-size: 11px; }
+.home-image-placeholder > span { padding: 8px; text-align: center; font-weight: 600; }
+.home-image-placeholder small { display: block; margin-top: 3px; font-size: 9px; font-weight: 400; }
 .home-explore-link { display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 700; text-transform: uppercase; }
 .home-explore-link svg { color: var(--primary); }
 .home-promotions { display: grid; grid-template-columns: minmax(0,2.4fr) minmax(0,1fr); gap: 16px; }
