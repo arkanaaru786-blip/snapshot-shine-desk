@@ -223,6 +223,7 @@
 .home-category-card:hover { border-color: var(--primary); transform: translateY(-2px); }
 .home-category-image { aspect-ratio: 2.3; overflow: hidden; background: var(--muted); }
 .home-category-image img { width: 100%; height: 100%; object-fit: cover; }
+.home-category-card:nth-child(3) .home-category-image img { object-fit: contain; }
 .home-category-content { padding: 9px 12px; }
 .home-category-name { display: flex; justify-content: space-between; align-items: center; gap: 4px; font-size: 13px; font-weight: 800; text-transform: uppercase; }
 .home-category-name svg { flex-shrink: 0; border: 1px solid var(--border); border-radius: 50%; }
@@ -264,6 +265,7 @@
 .home-listing-image { position: relative; aspect-ratio: 1.65; overflow: hidden; background: var(--muted); }
 .home-listing-image img { width: 100%; height: 100%; object-fit: cover; }
 .home-category-preview img { object-fit: cover; }
+.home-listing-card:nth-child(3) .home-listing-image img { object-fit: contain; }
 .home-demo-badge { position: absolute; bottom: 5px; left: 5px; background: var(--ink); color: var(--ink-foreground); padding: 2px 5px; border-radius: 2px; font-size: 8px; font-weight: 600; }
 .home-listing-card > div:last-child { padding: 9px; }
 .home-listing-card h3 { font-family: var(--font-sans); font-size: 12px; min-height: 34px; }
@@ -277,10 +279,10 @@
 .home-action-intro h2 { font-family: var(--font-sans); font-size: 17px; font-weight: 800; }
 .home-action-intro p { font-size: 11px; margin-top: 3px; }
 .home-action-options { display: flex; overflow-x: auto; scrollbar-width: none; min-width: 0; }
-.home-action-options > a { display: flex; align-items: center; gap: 7px; padding: 5px 12px; flex: 1 0 auto; min-height: 44px; border-left: 1px solid color-mix(in oklab,var(--ink-foreground) 14%,transparent); }
+.home-action-options > a { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 5px 10px; flex: 1 0 auto; min-height: 44px; border-left: 1px solid color-mix(in oklab,var(--ink-foreground) 14%,transparent); }
 .home-action-options svg { color: var(--primary); flex-shrink: 0; }
 .home-action-options strong { display: block; font-size: 11px; text-transform: uppercase; }
-.home-action-options small { display: block; font-size: 9px; }
+.home-action-options small { display: none; }
 .home-action-options a:hover strong { color: var(--primary); }
 .home-trust { padding-block: 22px; }
 .home-trust > div > div:last-child { margin-top: 12px; gap: 10px; }
