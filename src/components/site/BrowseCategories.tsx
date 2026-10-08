@@ -1,16 +1,34 @@
 import { Link } from "@tanstack/react-router";
 import { BUY_CATEGORIES } from "@/lib/site";
 import { ArrowRight, ChevronRight } from "lucide-react";
-import cars from "@/assets/categories/cars.jpg";
-import bikes from "@/assets/categories/bikes.jpg";
-import threeWheelers from "@/assets/categories/three-wheelers.jpg";
-import scv from "@/assets/categories/scv.jpg";
-import trucks from "@/assets/categories/trucks.jpg";
-import buses from "@/assets/categories/buses.jpg";
-import tractors from "@/assets/categories/tractors.jpg";
-import taxi from "@/assets/categories/taxi.jpg";
+import cars from "@/assets/car-hatch.jpg";
+import threeWheelers from "@/assets/homepage/auto-scene.jpg.asset.json";
+import maruti from "@/assets/homepage/maruti.svg.asset.json";
+import hyundai from "@/assets/homepage/hyundai.png.asset.json";
+import tata from "@/assets/homepage/tata.png.asset.json";
+import toyota from "@/assets/homepage/toyota.png.asset.json";
+import mahindra from "@/assets/homepage/mahindra.webp.asset.json";
+import honda from "@/assets/homepage/honda.png.asset.json";
+import kia from "@/assets/homepage/kia.png.asset.json";
+import mg from "@/assets/homepage/mg.png.asset.json";
+import renault from "@/assets/homepage/renault.png.asset.json";
+import skoda from "@/assets/homepage/skoda.png.asset.json";
+import bmw from "@/assets/homepage/bmw.png.asset.json";
+import mercedes from "@/assets/homepage/mercedes-benz.png.asset.json";
+import bajaj from "@/assets/homepage/bajaj.gif.asset.json";
+import tvs from "@/assets/homepage/tvs.svg.asset.json";
+import eicher from "@/assets/homepage/eicher.png.asset.json";
+import force from "@/assets/homepage/force-motors.png.asset.json";
 
-const IMAGES = [cars, bikes, threeWheelers, scv, trucks, buses, tractors, taxi];
+// Only independent scene photographs; unavailable categories stay replaceable.
+const IMAGES: (string | undefined)[] = [cars, undefined, threeWheelers.url, undefined, undefined, undefined, undefined, undefined];
+const BRAND_LOGOS: Record<string, string> = {
+  "Maruti Suzuki": maruti.url, Hyundai: hyundai.url, Tata: tata.url,
+  "Tata Motors": tata.url, Toyota: toyota.url, Mahindra: mahindra.url,
+  Honda: honda.url, Kia: kia.url, MG: mg.url, Renault: renault.url,
+  "Škoda": skoda.url, BMW: bmw.url, "Mercedes-Benz": mercedes.url,
+  Bajaj: bajaj.url, TVS: tvs.url, Eicher: eicher.url, Force: force.url,
+};
 const CATEGORY_BRANDS = [
   ["Maruti Suzuki", "Hyundai", "Tata", "Toyota"],
   ["Royal Enfield", "Bajaj", "TVS", "Honda"],
@@ -22,12 +40,12 @@ const CATEGORY_BRANDS = [
   ["Maruti Suzuki", "Toyota", "Hyundai"],
 ];
 
-// Replaceable text wordmarks, not fabricated manufacturer logo artwork.
+// Authentic manufacturer artwork; text remains only where no logo is available.
 export function BrandStrip() {
   return (
     <nav aria-label="Featured vehicle brands" className="home-brand-rail">
-      {["Maruti Suzuki", "Hyundai", "Tata Motors", "Toyota", "Mahindra", "Honda", "Kia", "MG", "Renault", "Škoda", "BMW", "Mercedes-Benz", "Volvo"].map((brand) => (
-        <Link key={brand} to="/cars" search={{ brand: brand === "Tata Motors" ? "Tata" : brand }} className="home-brand-wordmark">{brand}</Link>
+      {["Maruti Suzuki", "Hyundai", "Tata Motors", "Toyota", "Mahindra", "Honda", "Kia", "MG", "Renault", "Škoda", "BMW", "Mercedes-Benz"].map((brand) => (
+        <Link key={brand} to="/cars" search={{ brand: brand === "Tata Motors" ? "Tata" : brand }} className="home-brand-wordmark" aria-label={brand}><img src={BRAND_LOGOS[brand]} alt={`${brand} logo`} width={66} height={34} loading="lazy" /></Link>
       ))}
       <Link to="/cars" className="home-brand-all">View all brands <ArrowRight size={14} /></Link>
     </nav>
@@ -41,16 +59,16 @@ export function BrowseCategories() {
         <div className="home-section-heading"><div><h2>Explore <span>Vehicles</span></h2><p>Find your perfect ride from our wide range of vehicles.</p></div><Link to="/cars">View all <ArrowRight size={14} /></Link></div>
         <div className="home-category-grid">
           {BUY_CATEGORIES.map((c, i) => {
-            const image = IMAGES[i] ?? cars;
+            const image = IMAGES[i];
             return (
               <Link
                 key={c.to}
                 to={c.to}
                 className="home-category-card group"
               >
-                <div className="home-category-image"><img src={image} alt={`${c.label} marketplace category`} width={720} height={450} loading="lazy" /></div>
+                <div className="home-category-image">{image ? <img src={image} alt={`${c.label} illustrative photograph`} width={720} height={450} loading="lazy" /> : <span className="home-image-placeholder"><span>{c.label}<small>Photo coming soon</small></span></span>}</div>
                 <div className="home-category-content"><span className="home-category-name">{c.label}<ChevronRight size={16} /></span>
-                  <span className="home-category-brands">{CATEGORY_BRANDS[i]?.map((brand) => <span key={brand} className="home-category-wordmark">{brand}</span>)}</span>
+                  <span className="home-category-brands">{CATEGORY_BRANDS[i]?.map((brand) => <span key={brand} className="home-category-wordmark">{BRAND_LOGOS[brand] ? <img src={BRAND_LOGOS[brand]} alt={`${brand} logo`} width={52} height={23} loading="lazy" /> : brand}</span>)}</span>
                   <span className="home-explore-link">Explore <ArrowRight size={12} /></span>
                 </div>
               </Link>
