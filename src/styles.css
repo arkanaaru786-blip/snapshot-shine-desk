@@ -194,16 +194,20 @@
 .home-hero { height: 440px; }
 .home-hero-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 62%; }
 .home-hero-shade { position: absolute; inset: 0; background: var(--home-hero-overlay); }
-.home-hero-content { position: relative; padding-top: 28px; }
+.home-hero-content { position: relative; padding-top: 20px; padding-left: 26px; }
 .home-hero-copy { max-width: 510px; }
 .home-hero-copy h1 { font-family: var(--font-sans); font-size: 48px; font-weight: 800; font-style: italic; line-height: .99; }
 .home-hero-copy h1 > span { white-space: nowrap; }
 .home-hero-copy p { max-width: 410px; margin-top: 12px; font-size: 16px; font-weight: 500; line-height: 1.3; }
-.home-search { width: 100%; max-width: 500px; margin-top: 18px; background: var(--background); border-radius: 5px; overflow: hidden; box-shadow: var(--shadow-panel); }
-.home-search button { height: 48px; border-radius: 4px; }
+.home-search { width: 100%; max-width: 470px; margin-top: 10px; background: var(--background); border-radius: 5px; overflow: hidden; box-shadow: var(--shadow-panel); }
+.home-search input { height: 42px; }
+.home-search button { height: 42px; border-radius: 4px; }
 .home-hero-actions { display: none; }
-.home-brand-rail { display: flex; align-items: stretch; overflow-x: auto; scrollbar-width: none; min-height: 52px; }
-.home-brand-wordmark { display: flex; align-items: center; justify-content: center; flex: 1 0 auto; min-width: 72px; padding: 10px; border-right: 1px solid color-mix(in oklab,var(--ink-foreground) 12%,transparent); font-size: 10px; font-weight: 800; text-align: center; text-transform: uppercase; line-height: 1.1; }
+.home-hero-shell:has(.home-brand-rail) > .home-container { background: var(--background); max-width: none; }
+.home-brand-rail { display: flex; align-items: stretch; overflow-x: auto; scrollbar-width: none; min-height: 62px; max-width: 1376px; margin-inline: auto; background: var(--background); color: var(--foreground); }
+.home-brand-wordmark { display: flex; align-items: center; justify-content: center; flex: 1 0 auto; min-width: 72px; padding: 10px; border-right: 1px solid var(--border); font-size: 10px; font-weight: 800; text-align: center; text-transform: uppercase; line-height: 1.1; }
+.home-brand-wordmark img { width: 66px; height: 34px; object-fit: contain; }
+.home-brand-wordmark:first-child img { width: 92px; }
 .home-brand-wordmark:hover, .home-brand-all:hover { color: var(--primary); }
 .home-brand-all { display: flex; gap: 6px; align-items: center; white-space: nowrap; padding: 12px; font-size: 11px; font-weight: 600; }
 .home-brand-all svg { color: var(--primary); }
@@ -218,13 +222,20 @@
 .home-category-card { min-width: 0; overflow: hidden; border: 1px solid var(--border); background: var(--card); border-radius: 5px; box-shadow: var(--home-shadow); transition: border-color .2s, transform .2s; }
 .home-category-card:hover { border-color: var(--primary); transform: translateY(-2px); }
 .home-category-image { aspect-ratio: 2.3; overflow: hidden; background: var(--muted); }
-.home-category-image img { width: 100%; height: 100%; object-fit: cover; transform: scale(2.65); clip-path: inset(0 9%); }
+.home-category-image img { width: 100%; height: 100%; object-fit: cover; }
+.home-category-card:nth-child(3) .home-category-image img { object-fit: contain; }
 .home-category-content { padding: 9px 12px; }
 .home-category-name { display: flex; justify-content: space-between; align-items: center; gap: 4px; font-size: 13px; font-weight: 800; text-transform: uppercase; }
 .home-category-name svg { flex-shrink: 0; border: 1px solid var(--border); border-radius: 50%; }
 .home-category-brands { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 26px; margin-top: 4px; }
 .home-category-wordmark { max-width: 28%; font-size: 9px; font-weight: 800; text-transform: uppercase; line-height: 1.1; text-align: center; color: var(--foreground); }
 .home-category-wordmark:nth-child(even) { color: var(--primary); }
+.home-category-wordmark img { width: 52px; max-width: 100%; height: 23px; object-fit: contain; }
+.home-category-wordmark:has(img[alt="Maruti Suzuki logo"]) { max-width: 38%; }
+.home-category-wordmark img[alt="Maruti Suzuki logo"] { width: 88px; }
+.home-image-placeholder { display: grid; place-items: center; width: 100%; height: 100%; background: var(--muted); color: var(--muted-foreground); font-size: 11px; }
+.home-image-placeholder > span { padding: 8px; text-align: center; font-weight: 600; }
+.home-image-placeholder small { display: block; margin-top: 3px; font-size: 9px; font-weight: 400; }
 .home-explore-link { display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 700; text-transform: uppercase; }
 .home-explore-link svg { color: var(--primary); }
 .home-promotions { display: grid; grid-template-columns: minmax(0,2.4fr) minmax(0,1fr); gap: 16px; }
@@ -253,7 +264,8 @@
 .home-listing-grid { display: grid; grid-template-columns: repeat(8,minmax(0,1fr)); gap: 12px; }
 .home-listing-image { position: relative; aspect-ratio: 1.65; overflow: hidden; background: var(--muted); }
 .home-listing-image img { width: 100%; height: 100%; object-fit: cover; }
-.home-category-preview img { transform: scale(2.6); clip-path: inset(0 9%); }
+.home-category-preview img { object-fit: cover; }
+.home-listing-card:nth-child(3) .home-listing-image img { object-fit: contain; }
 .home-demo-badge { position: absolute; bottom: 5px; left: 5px; background: var(--ink); color: var(--ink-foreground); padding: 2px 5px; border-radius: 2px; font-size: 8px; font-weight: 600; }
 .home-listing-card > div:last-child { padding: 9px; }
 .home-listing-card h3 { font-family: var(--font-sans); font-size: 12px; min-height: 34px; }
@@ -267,10 +279,10 @@
 .home-action-intro h2 { font-family: var(--font-sans); font-size: 17px; font-weight: 800; }
 .home-action-intro p { font-size: 11px; margin-top: 3px; }
 .home-action-options { display: flex; overflow-x: auto; scrollbar-width: none; min-width: 0; }
-.home-action-options > a { display: flex; align-items: center; gap: 7px; padding: 5px 12px; flex: 1 0 auto; border-left: 1px solid color-mix(in oklab,var(--ink-foreground) 14%,transparent); }
+.home-action-options > a { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 5px 10px; flex: 1 0 auto; min-height: 44px; border-left: 1px solid color-mix(in oklab,var(--ink-foreground) 14%,transparent); }
 .home-action-options svg { color: var(--primary); flex-shrink: 0; }
 .home-action-options strong { display: block; font-size: 11px; text-transform: uppercase; }
-.home-action-options small { display: block; font-size: 9px; }
+.home-action-options small { display: none; }
 .home-action-options a:hover strong { color: var(--primary); }
 .home-trust { padding-block: 22px; }
 .home-trust > div > div:last-child { margin-top: 12px; gap: 10px; }
@@ -299,11 +311,12 @@
   .mw-home header .home-primary-rail { padding-inline: 12px; }
   .home-primary-rail > a { min-height: 42px; padding-inline: 15px; font-size: 11px; }
   .home-hero { height: 390px; }
+  .home-hero-content { padding-top: 20px; padding-left: 16px; }
   .home-hero-image { top: auto; bottom: 0; height: auto; object-position: center; }
   .home-hero-shade { background: linear-gradient(180deg, color-mix(in oklab,var(--ink) 90%,transparent), color-mix(in oklab,var(--ink) 15%,transparent) 70%); }
   .home-hero-copy h1 { font-size: 34px; }
   .home-hero-copy p { max-width: 320px; font-size: 14px; }
-  .home-search { margin-top: 16px; }
+  .home-search { margin-top: 12px; }
   .home-search label { padding-inline: 9px; gap: 6px; }
   .home-search input { font-size: 11px; }
   .home-search button { padding-inline: 13px; font-size: 11px; }

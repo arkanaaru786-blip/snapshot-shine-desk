@@ -5,22 +5,17 @@ import { VEHICLES, formatPrice, formatKm } from "@/lib/cars-data";
 import { CATEGORIES, CATEGORY_LISTINGS } from "@/lib/vehicle-categories";
 import franchiseShowroom from "@/assets/franchise-showroom.jpg";
 import businessSpotlight from "@/assets/business-spotlight.jpg";
-import carImage from "@/assets/categories/cars.jpg";
-import bikeImage from "@/assets/categories/bikes.jpg";
-import threeWheelImage from "@/assets/categories/three-wheelers.jpg";
-import scvImage from "@/assets/categories/scv.jpg";
-import truckImage from "@/assets/categories/trucks.jpg";
-import busImage from "@/assets/categories/buses.jpg";
-import tractorImage from "@/assets/categories/tractors.jpg";
-import taxiImage from "@/assets/categories/taxi.jpg";
+import carPhoto from "@/assets/homepage/baleno-scene.jpg.asset.json";
+import threeWheelPhoto from "@/assets/homepage/auto-scene.jpg.asset.json";
 
-const CATEGORY_IMAGES = [bikeImage, threeWheelImage, scvImage, truckImage, busImage, tractorImage, taxiImage];
+// Presentation-only imagery: do not substitute unrelated models for demo listings.
+const CATEGORY_IMAGES: (string | undefined)[] = [undefined, threeWheelPhoto.url, undefined, undefined, undefined, undefined, undefined];
 const car = VEHICLES.find((vehicle) => vehicle.status === "Available");
 const LISTINGS = [
-  ...(car ? [{ name: `${car.make} ${car.model}`, variant: car.variant, year: car.year, fuel: car.fuel, km: formatKm(car.kilometres), place: car.location, price: formatPrice(car.price), image: car.images[0] ?? carImage, to: "/cars/$id", slug: car.slug, badge: "Demo listing" }] : []),
+  ...(car ? [{ name: `${car.make} ${car.model}`, variant: car.variant, year: car.year, fuel: car.fuel, km: formatKm(car.kilometres), place: car.location, price: formatPrice(car.price), image: carPhoto.url, to: "/cars/$id", slug: car.slug, badge: "Demo listing" }] : []),
   ...CATEGORIES.flatMap((category, index) => {
     const listing = CATEGORY_LISTINGS.find((item) => item.category === category.id);
-    return listing ? [{ name: `${listing.brand.replace(/\s*\([^)]*\)/g, "")} ${listing.model}`, variant: category.title, year: listing.year, fuel: listing.fuel, km: formatKm(listing.kilometres), place: listing.location, price: formatPrice(listing.price), image: CATEGORY_IMAGES[index] ?? carImage, to: category.to, slug: undefined, badge: "Demo listing" }] : [];
+    return listing ? [{ name: `${listing.brand.replace(/\s*\([^)]*\)/g, "")} ${listing.model}`, variant: category.title, year: listing.year, fuel: listing.fuel, km: formatKm(listing.kilometres), place: listing.location, price: formatPrice(listing.price), image: CATEGORY_IMAGES[index], to: category.to, slug: undefined, badge: "Demo listing" }] : [];
   }),
 ];
 
@@ -87,7 +82,7 @@ export function PopularVehicles() {
         <div className="home-listing-grid">
           {LISTINGS.map((item) => (
             <article key={item.name} className="home-listing-card flex min-w-0 flex-col overflow-hidden rounded-sm border border-border bg-card shadow-sm">
-              <div className={`home-listing-image ${item.slug ? "" : "home-category-preview"}`}><img src={item.image} alt={item.slug ? item.name : `${item.variant} illustrative category image`} width={720} height={450} loading="lazy" /><span className="home-demo-badge">{item.badge}</span></div>
+              <div className={`home-listing-image ${item.slug ? "" : "home-category-preview"}`}>{item.image ? <img src={item.image} alt={`${item.name} illustrative demo photograph`} width={720} height={450} loading="lazy" /> : <span className="home-image-placeholder"><span>Vehicle photo<small>Coming soon</small></span></span>}<span className="home-demo-badge">{item.badge}</span></div>
               <div className="flex flex-1 flex-col p-3">
                 <p className="truncate text-[0.55rem] font-bold uppercase text-primary">{item.name.split(" ")[0]}</p>
                 <h3 className="mt-0.5 min-h-9 text-xs font-bold leading-tight normal-case">{item.name}</h3>
