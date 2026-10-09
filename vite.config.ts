@@ -20,7 +20,7 @@ export default defineConfig({
     output: {
       dir: "dist",
       serverDir: "dist/server",
-      publicDir: "dist/client",
+      publicDir: "dist",
     },
   },
   vite: {
@@ -32,14 +32,13 @@ export default defineConfig({
         buildApp: {
           order: "post" as const,
           async handler() {
-            const clientDir = join(process.cwd(), "dist", "client");
-            const shell = join(clientDir, "_shell.html");
-            const indexHtml = join(clientDir, "index.html");
+            const distDir = join(process.cwd(), "dist");
+            const shell = join(distDir, "_shell.html");
+            const indexHtml = join(distDir, "index.html");
             if (existsSync(shell)) {
               copyFileSync(shell, indexHtml);
             }
-            // Netlify-style SPA fallback so all routes serve the app shell.
-            writeFileSync(join(clientDir, "_redirects"), "/*  /index.html  200\n");
+            writeFileSync(join(distDir, "_redirects"), "/*  /index.html  200\n");
           },
         },
       },
