@@ -5,12 +5,16 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { copyFileSync, writeFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
 
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
+    // Generate a static index.html shell so the preview works without a running server.
+    spa: { enabled: true },
   },
   nitro: {
     output: {
@@ -18,5 +22,27 @@ export default defineConfig({
       serverDir: "dist/server",
       publicDir: "dist/client",
     },
+  },
+  vite: {
+    plugins: [
+      {
+        name: "spa-shell-index-html",
+        apply: "build" as const,
+        enforce: "post" as const,
+        buildApp: {
+          order: "post" as const,
+          async handler() {
+            const clientDir = join(process.cwd(), "dist", "client");
+            const shell = join(clientDir, "_shell.html");
+            const indexHtml = join(clientDir, "index.html");
+            if (existsSync(shell)) {
+              copyFileSync(shell, indexHtml);
+            }
+            // Netlify-style SPA fallback so all routes serve the app shell.
+            writeFileSync(join(clientDir, "_redirects"), "/*  /index.html  200\n");
+          },
+        },
+      },
+    ],
   },
 });
