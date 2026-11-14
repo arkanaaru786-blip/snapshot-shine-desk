@@ -13,7 +13,7 @@ import {
 /** Shared by the /master-admin/login route file. */
 export function MasterAdminLoginPage() {
   const navigate = useNavigate();
-  const { ready, session, needsSetup } = useAdminSession();
+  const { ready, session } = useAdminSession();
   const envEmail = envAdminEmail();
 
   const [mode, setMode] = useState<"signin" | "setup">("signin");
@@ -24,7 +24,7 @@ export function MasterAdminLoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const setup = needsSetup && mode === "setup";
+  const setup = mode === "setup";
 
   useEffect(() => {
     if (ready && session) void navigate({ to: "/master-admin", replace: true });
@@ -102,23 +102,24 @@ export function MasterAdminLoginPage() {
             <span className="mw-admin-badge">Phase 1</span>
           </div>
 
-          {needsSetup && mode === "signin" ? (
+          {/*
+            A missing local account is not proof that no administrator exists:
+            the account directory is per-device, so a private window or a new
+            laptop always starts empty and used to be pushed into first-run
+            setup. The login form is always the first thing shown; setup only
+            opens when someone asks for it below.
+          */}
+          {mode === "setup" ? (
             <div className="mw-admin-setup-hint">
               <Lock size={16} />
               <p>
-                No administrator account is configured yet.{" "}
-                <button
-                  type="button"
-                  onClick={() => setMode("setup")}
-                  data-testid="admin-setup-link"
-                >
-                  Set up the master admin
-                </button>
+                First-run setup stores an administrator for <b>this browser only</b>. If the control
+                room already has an owner, go back and sign in instead.
               </p>
             </div>
           ) : null}
 
-          {!needsSetup && envEmail && mode === "signin" ? (
+          {envEmail && mode === "signin" ? (
             <div className="mw-admin-env-hint">
               <ShieldCheck size={16} />
               <p>
@@ -223,6 +224,25 @@ export function MasterAdminLoginPage() {
                 ? "Password rule: 10+ characters with a letter and a number."
                 : `Session security: ${ADMIN_SOURCE_LABEL.environment} or ${ADMIN_SOURCE_LABEL.database.toLowerCase()}.`}
             </span>
+            {setup ? (
+              <button
+                type="button"
+                className="mw-admin-linkbtn"
+                onClick={() => setMode("signin")}
+                data-testid="admin-signin-link"
+              >
+                I already have an account
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="mw-admin-linkbtn"
+                onClick={() => setMode("setup")}
+                data-testid="admin-setup-link"
+              >
+                First-run setup
+              </button>
+            )}
             <a href="/">← Back to Motor Wallah</a>
           </div>
         </section>

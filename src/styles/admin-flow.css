@@ -329,6 +329,42 @@
   font-weight: 600;
   color: var(--adm-red);
 }
+.mw-admin-linkbtn {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--adm-red);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Header notice: the panel login has no matching Supabase staff session, so
+   privileged writes (Storage uploads, settings saves) will be refused. */
+.mw-admin-dbwarn {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  padding: 13px 15px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, var(--adm-red) 26%, var(--adm-line));
+  background: color-mix(in oklab, var(--adm-red) 6%, #fff);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: color-mix(in oklab, var(--adm-ink) 82%, transparent);
+}
+.mw-admin-dbwarn svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--adm-red);
+}
+.mw-admin-dbwarn strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--adm-ink);
+}
 
 /* =================================================================== SHELL */
 

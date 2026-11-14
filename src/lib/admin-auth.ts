@@ -11,6 +11,14 @@ import {
 } from "./admin-crypto";
 import { verifyEmployeeSignIn } from "./admin-crm";
 import { ROLES, ROLE_LABEL, type Department, type Role } from "./admin-rbac";
+import {
+  currentStaff,
+  restoreStaffSession,
+  staffClient,
+  staffSignIn,
+  staffSignOut,
+  type StaffState,
+} from "./staff-auth";
 
 /**
  * Master Admin authentication.
@@ -69,10 +77,25 @@ export type AdminSession = {
   department: Department | null;
   /** Where the credential that signed this session in came from. */
   source: "environment" | "database" | "employee";
+  /**
+   * State of the Supabase session behind this sign-in. The panel's own password
+   * check is device-local; privileged database work (site settings, banners,
+   * Storage uploads) needs a real Supabase Auth user carrying `is_staff()`.
+   * `undefined` means an older session written before this was tracked.
+   */
+  database?: DatabaseLink;
   issuedAt: string;
   lastSeenAt: number;
   expiresAt: number;
 };
+
+/**
+ * - staff: Supabase issued a token for this email and `is_staff()` is true.
+ * - not-staff: Supabase refused the password, or the user is not on the
+ *   allow-list — every privileged write will be rejected with 42501.
+ * - unverified: no database in this build, or the check has not run yet.
+ */
+export type DatabaseLink = "staff" | "not-staff" | "unverified";
 
 export type AdminAuthSnapshot = {
   /** false during SSR / hydration, before the stored session is read. */
@@ -234,7 +257,12 @@ function touchIdle(session: AdminSession): AdminSession {
 }
 
 let snapshot: AdminAuthSnapshot = SIGNED_OUT;
-if (typeof window !== "undefined") snapshot = computeSnapshot();
+if (typeof window !== "undefined") {
+  snapshot = computeSnapshot();
+  // Re-attach the Supabase session of a panel login that survived a reload, so
+  // uploads and settings writes keep their staff token after the token refreshes.
+  if (snapshot.session) void syncDatabaseSession();
+}
 
 const listeners = new Set<() => void>();
 
@@ -274,6 +302,60 @@ export function useAdminReady() {
     () => true,
     () => false,
   );
+}
+
+/* ------------------------------------------------------- database session */
+
+/**
+ * Sign the same person into Supabase Auth so every request from the panel
+ * carries a staff JWT.
+ *
+ * The panel password is verified on the device first, so a wrong password never
+ * reaches the network. When Supabase has a user with the same email and
+ * password, this stores a session under `mw_staff_auth`; supabase-js then sends
+ * `Authorization: Bearer …` on table reads, RPC calls and Storage uploads, which
+ * is what `is_staff()` checks.
+ */
+async function linkDatabase(email: string, password: string): Promise<DatabaseLink> {
+  if (typeof window === "undefined" || !staffClient()) return "unverified";
+  try {
+    const already = await currentStaff();
+    if (already && already.email.toLowerCase() === email) {
+      return already.isStaff ? "staff" : "not-staff";
+    }
+    const result = await staffSignIn(email, password);
+    if (!result.ok) return "not-staff";
+    return result.isStaff ? "staff" : "not-staff";
+  } catch {
+    return "unverified";
+  }
+}
+
+function applyDatabaseLink(session: AdminSession, database: DatabaseLink): AdminSession {
+  const next: AdminSession = { ...session, database };
+  writeSession(next);
+  emit();
+  return next;
+}
+
+/**
+ * Re-check the Supabase side of an existing panel session — on boot, and after a
+ * token refresh. It never asks for the password again: the linked Supabase
+ * session is restored from its own storage key.
+ */
+export async function syncDatabaseSession(): Promise<DatabaseLink> {
+  const session = readSession();
+  if (!session || typeof window === "undefined") return "unverified";
+  if (!staffClient()) return "unverified";
+  let state: StaffState | null = null;
+  try {
+    state = await restoreStaffSession();
+  } catch {
+    state = null;
+  }
+  const database: DatabaseLink = state?.isStaff ? "staff" : "not-staff";
+  if (session.database !== database) applyDatabaseLink(session, database);
+  return database;
 }
 
 /* ------------------------------------------------------------------- API */
@@ -399,8 +481,12 @@ export async function signInAdmin(emailInput: string, password: string): Promise
     };
   }
 
+  if (!verified.ok) return verified;
   clearFailures(email);
-  return verified;
+  // A device-local password is not enough for privileged writes: link the same
+  // credentials to Supabase so the panel's requests carry a staff token.
+  const database = await linkDatabase(email, password);
+  return { ok: true, session: applyDatabaseLink(verified.session, database) };
 }
 
 async function startSession(
@@ -430,6 +516,9 @@ function splitName(email: string, fallback: string): string {
 export function signOutAdmin() {
   writeSession(null);
   emit();
+  // Drop the linked Supabase session too, so the next person on this browser
+  // cannot reuse its staff token.
+  void staffSignOut();
 }
 
 /* ------------------------------------------------------- first-run setup */
@@ -483,17 +572,18 @@ export async function enrollAdmin(input: {
   if (!writeAccounts(accounts)) {
     return { ok: false, error: "This browser blocked storage, so the account could not be saved." };
   }
-  return {
-    ok: true,
-    session: await startSession({
-      employeeId: "OWNER-1",
-      email,
-      name,
-      role: account.role,
-      department: null,
-      source: "database",
-    }),
-  };
+  const session = await startSession({
+    employeeId: "OWNER-1",
+    email,
+    name,
+    role: account.role,
+    department: null,
+    source: "database",
+  });
+  // Same credentials, same bridge as a normal sign-in: if Supabase has this
+  // person as a staff user, the panel's writes carry a staff token from now on.
+  const database = await linkDatabase(email, input.password);
+  return { ok: true, session: applyDatabaseLink(session, database) };
 }
 
 /** Human labels for the credential source shown in the panel footer. */

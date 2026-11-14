@@ -217,7 +217,23 @@ export function AdminShell({
           </div>
         </header>
 
-        <main className="mw-admin-main">{children}</main>
+        <main className="mw-admin-main">
+          {session.database === "not-staff" ? (
+            <div className="mw-admin-dbwarn" role="status" data-testid="admin-db-warning">
+              <ShieldAlert size={17} />
+              <div>
+                <strong>This browser has no staff database session</strong>
+                <span>
+                  You are signed in to the panel on this device, but Supabase did not accept{" "}
+                  <b>{session.email}</b> as a staff user, so Storage uploads and settings saves will
+                  be refused with a row-level-security error. Banners &amp; Ads and Site Settings
+                  show the database sign-in for exactly this reason.
+                </span>
+              </div>
+            </div>
+          ) : null}
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -89,6 +89,32 @@ export async function staffSignOut(): Promise<void> {
   await staffClient()?.auth.signOut();
 }
 
+/**
+ * Re-attach the staff session after a reload.
+ *
+ * supabase-js keeps the access token in storage, but the in-memory client is
+ * rebuilt on every page load; `getSession()` reads it back and
+ * `refreshSession()` renews an expired token instead of dropping the person to
+ * the signed-out state.
+ */
+export async function restoreStaffSession(): Promise<StaffState | null> {
+  const supabase = staffClient();
+  if (!supabase) return null;
+  const existing = await currentStaff();
+  if (existing) return existing;
+  const { data } = await supabase.auth.refreshSession();
+  if (!data.session) return null;
+  return currentStaff();
+}
+
+/** The bearer token supabase-js attaches to storage and table requests. */
+export async function staffAccessToken(): Promise<string | null> {
+  const supabase = staffClient();
+  if (!supabase) return null;
+  const { data } = await supabase.auth.getSession();
+  return data.session?.access_token ?? null;
+}
+
 /** Whether the current staff session may write settings (true only for staff). */
 export async function staffMayWrite(): Promise<boolean> {
   return (await currentStaff())?.isStaff ?? false;
