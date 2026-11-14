@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { describeSupabaseError, supabaseClient } from "@/lib/supabase";
-import { staffClient } from "@/lib/staff-auth";
+import { staffAccessToken, staffClient, staffSession } from "@/lib/staff-auth";
 
 /**
  * Dynamic banners and ads.
@@ -234,6 +234,8 @@ export async function saveBanner(
 ): Promise<{ ok: boolean; error?: string; banner?: Banner }> {
   const client = staffClient();
   if (!client) return { ok: false, error: "The database is not configured for this build." };
+  // A write with an expired token is rejected by the database; refresh first.
+  await staffSession();
 
   const row: Record<string, unknown> = {
     section: input.section,
@@ -302,19 +304,37 @@ export async function uploadBannerMedia(
   const client = staffClient();
   if (!client) return { ok: false, error: "The database is not configured for this build." };
 
+  // The upload has to carry the staff JWT explicitly. supabase-js mirrors the
+  // session into the storage client, but that mirroring happens on auth events,
+  // so a page that was reloaded (session restored from localStorage) or a token
+  // that expired mid-session can send the request without it and the bucket's
+  // is_staff() policy then rejects it.
+  const token = await staffAccessToken();
+  if (!token) {
+    return {
+      ok: false,
+      error: "No staff session is stored in this browser. Sign in again, then upload.",
+    };
+  }
+
   // Every upload gets its own path, so nothing is ever overwritten. upsert:true
   // would make Storage read the existing object first, which needs a SELECT
   // policy on storage.objects and fails RLS for staff uploads; a plain INSERT
   // only needs the "banners media staff write" policy from supabase/banners.sql.
   const path = `${section}-${Date.now()}.${extensionOf(file)}`;
-  const { error } = await client.storage
-    .from(MEDIA_BUCKET)
-    .upload(path, file, { cacheControl: "3600", upsert: false, contentType: file.type });
+  const { error } = await client.storage.from(MEDIA_BUCKET).upload(path, file, {
+    cacheControl: "3600",
+    upsert: false,
+    contentType: file.type,
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
   if (error) {
     const message = /bucket/i.test(error.message)
       ? "The banners storage bucket does not exist yet. Run supabase/banners.sql, then try again."
-      : `${error.message} — sign in with a staff account, then upload again.`;
+      : /row-level security|unauthorized|jwt|permission/i.test(error.message)
+        ? `${error.message} — the request reached Supabase but was refused. Check that your user id (not just the email) is in public.staff, then sign out and sign in again.`
+        : `${error.message} — sign in with a staff account, then upload again.`;
     return { ok: false, error: message };
   }
 

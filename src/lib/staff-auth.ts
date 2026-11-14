@@ -9,8 +9,8 @@ import {
 /**
  * Staff sign-in.
  *
- * Editing site settings is a staff-only write (`is_staff()` in
- * supabase/fix-rls.sql), so the admin panel needs a Supabase session that really
+ * Editing site settings, banners and ads are staff-only writes (`is_staff()` in
+ * supabase/schema.sql), so the admin panel needs a Supabase session that really
  * belongs to a staff member. It deliberately does **not** reuse the visitor
  * client from `supabase.ts`: that one holds the anonymous session which owns the
  * cart, shortlist and chats, and swapping its identity for a staff login would
@@ -18,7 +18,9 @@ import {
  *
  * So this is a second, separate client with its own storage key. Signing in here
  * gives the admin panel a staff JWT for privileged reads and writes while the
- * public site keeps its anonymous session untouched.
+ * public site keeps its anonymous session untouched. The session is persisted in
+ * localStorage under `mw_staff_auth` and refreshed before privileged calls, so a
+ * token is always present when a write or upload leaves the browser.
  */
 let client: SupabaseClient | null = null;
 
@@ -36,6 +38,7 @@ export function staffClient(): SupabaseClient | null {
         autoRefreshToken: true,
         detectSessionInUrl: false,
         storageKey: STAFF_STORAGE_KEY,
+        storage: window.localStorage,
       },
       global: { headers: { "x-application-name": "motor-wallah-staff" } },
     });
@@ -43,24 +46,113 @@ export function staffClient(): SupabaseClient | null {
   return client;
 }
 
-export type StaffState = {
+/** A token with less than this left is refreshed before it is used. */
+const REFRESH_WINDOW_MS = 60_000;
+
+export type StaffSession = {
   email: string;
-  /** Whether the signed-in Supabase user is listed in public.staff. */
-  isStaff: boolean;
+  userId: string;
+  /** Epoch ms, 0 when the token carries no expiry. */
+  expiresAt: number;
+  accessToken: string;
 };
 
-/** The signed-in staff user, or null when nobody is signed in. */
-export async function currentStaff(): Promise<StaffState | null> {
+/**
+ * The stored staff session, refreshed if it is about to expire.
+ *
+ * supabase-js persists the session itself; this wrapper exists so a privileged
+ * call can guarantee it sends a live token rather than an expired one (an
+ * expired token is what makes PostgREST and Storage answer "not authorised" on
+ * an otherwise correct request).
+ */
+export async function staffSession(): Promise<StaffSession | null> {
   const supabase = staffClient();
   if (!supabase) return null;
 
   const { data } = await supabase.auth.getSession();
-  const email = data.session?.user.email ?? "";
-  if (!email) return null;
+  let session = data.session;
 
-  const { data: staff, error } = await supabase.rpc("is_staff");
-  if (error) return { email, isStaff: false };
-  return { email, isStaff: Boolean(staff) };
+  const expiresAt = (session?.expires_at ?? 0) * 1000;
+  const stale = Boolean(session) && expiresAt > 0 && expiresAt - Date.now() < REFRESH_WINDOW_MS;
+
+  if (stale) {
+    const { data: refreshed } = await supabase.auth.refreshSession();
+    session = refreshed.session ?? session;
+  }
+
+  if (!session?.user) return null;
+  return {
+    email: session.user.email ?? "",
+    userId: session.user.id,
+    expiresAt: (session.expires_at ?? 0) * 1000,
+    accessToken: session.access_token,
+  };
+}
+
+/** The bearer token for a request that has to carry one explicitly. */
+export async function staffAccessToken(): Promise<string | null> {
+  return (await staffSession())?.accessToken ?? null;
+}
+
+export type StaffState = {
+  email: string;
+  userId: string;
+  /** Whether the signed-in Supabase user is listed in public.staff. */
+  isStaff: boolean;
+  /** How the answer was obtained: the RPC, a direct row read, or not at all. */
+  checked: "rpc" | "table" | "none";
+  /** Why the check could not complete — shown to the admin instead of guessing. */
+  error: string | null;
+};
+
+/**
+ * The signed-in staff user, or null when nobody is signed in.
+ *
+ * `is_staff()` is the authoritative answer, but reporting "not staff" whenever
+ * that call fails hides the real cause (a missing function, a stale token, a
+ * database that has not had schema.sql run). So a failed RPC falls back to
+ * reading the caller's own `staff` row — RLS allows exactly that — and anything
+ * still unproven is reported as an error rather than as "not a staff member".
+ */
+export async function currentStaff(): Promise<StaffState | null> {
+  const session = await staffSession();
+  const supabase = staffClient();
+  if (!session || !supabase) return null;
+
+  const { data, error } = await supabase.rpc("is_staff");
+  if (!error) {
+    return {
+      email: session.email,
+      userId: session.userId,
+      isStaff: Boolean(data),
+      checked: "rpc",
+      error: null,
+    };
+  }
+
+  const { data: row, error: rowError } = await supabase
+    .from("staff")
+    .select("user_id")
+    .eq("user_id", session.userId)
+    .maybeSingle();
+
+  if (rowError) {
+    return {
+      email: session.email,
+      userId: session.userId,
+      isStaff: false,
+      checked: "none",
+      error: `${describeSupabaseError(error)} · ${describeSupabaseError(rowError)}`,
+    };
+  }
+
+  return {
+    email: session.email,
+    userId: session.userId,
+    isStaff: Boolean(row),
+    checked: "table",
+    error: null,
+  };
 }
 
 export async function staffSignIn(
@@ -105,14 +197,6 @@ export async function restoreStaffSession(): Promise<StaffState | null> {
   const { data } = await supabase.auth.refreshSession();
   if (!data.session) return null;
   return currentStaff();
-}
-
-/** The bearer token supabase-js attaches to storage and table requests. */
-export async function staffAccessToken(): Promise<string | null> {
-  const supabase = staffClient();
-  if (!supabase) return null;
-  const { data } = await supabase.auth.getSession();
-  return data.session?.access_token ?? null;
 }
 
 /** Whether the current staff session may write settings (true only for staff). */

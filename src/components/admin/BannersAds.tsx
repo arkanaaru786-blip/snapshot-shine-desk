@@ -328,9 +328,17 @@ export function BannersAdsPanel({ session }: { session: AdminSession }) {
     const state = await currentStaff();
     setStaff(state);
     if (!result.isStaff) {
-      setAuthError(
-        "That account signed in, but it is not on the staff allow-list, so the database will refuse the upload.",
-      );
+      // Say what actually happened: an unproven check is not the same thing as a
+      // missing staff row, and the two need different fixes.
+      if (state?.checked === "none") {
+        setAuthError(
+          `Signed in as ${state.email}, but Supabase could not verify the staff check: ${state.error ?? "unknown error"}. Run supabase/schema.sql (it defines is_staff()).`,
+        );
+      } else {
+        setAuthError(
+          `Signed in as ${state?.email ?? "?"} (user id ${state?.userId ?? "?"}), but public.staff has no row with that user id, so the database refuses staff writes. Add this exact line in the Supabase SQL editor: insert into public.staff (user_id, email, role) values ('${state?.userId ?? "<uuid>"}', '${state?.email ?? "<email>"}', 'super_admin');`,
+        );
+      }
     }
   }
 
@@ -424,12 +432,25 @@ export function BannersAdsPanel({ session }: { session: AdminSession }) {
         {!staffChecked ? (
           <p className="mw-admin-hint">Checking for a staff session…</p>
         ) : signedIn ? (
-          <p className="mw-admin-hint" data-testid="banners-staff-state">
-            Signed in as <strong>{staff?.email}</strong>.{" "}
-            {staff?.isStaff
-              ? "Uploads and saves are allowed."
-              : "This account is not on the staff allow-list, so the database will refuse the write."}
-          </p>
+          <div data-testid="banners-staff-state">
+            <p className="mw-admin-hint">
+              Signed in as <strong>{staff?.email}</strong>{" "}
+              {staff?.userId ? <span>(user id {staff.userId})</span> : null}.{" "}
+              {staff?.isStaff
+                ? "Staff access confirmed — uploads and saves are allowed."
+                : staff?.checked === "none"
+                  ? "The staff check could not be completed — see the error above."
+                  : "No public.staff row matches this user id, so the database will refuse the write."}
+            </p>
+            <p className="mw-admin-hint">
+              Checked through {staff?.checked === "rpc" ? "is_staff()" : staff?.checked === "table" ? "the staff row" : "nothing (the call failed)"}.
+            </p>
+            {staff?.checked === "none" && staff.error ? (
+              <p className="mw-admin-error" data-testid="banners-staff-error">
+                {staff.error}
+              </p>
+            ) : null}
+          </div>
         ) : (
           <div className="mw-admin-form" data-testid="banners-signin">
             <p className="mw-admin-hint">
