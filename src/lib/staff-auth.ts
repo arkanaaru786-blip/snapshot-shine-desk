@@ -182,6 +182,34 @@ export async function staffSignOut(): Promise<void> {
 }
 
 /**
+ * Email a Supabase password-recovery link to a staff user.
+ *
+ * The link lands on /reset-password, which reads the recovery token from the URL
+ * hash and calls `updateUser` on the staff client (the same storage key as the
+ * control room). The redirect must be allowed in the Supabase project's Redirect
+ * URLs.
+ */
+export async function sendStaffPasswordReset(
+  email: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const supabase = staffClient();
+  if (!supabase) return { ok: false, error: "The database is not configured for this build." };
+  if (typeof window === "undefined")
+    return { ok: false, error: "A reset link can only be sent from the browser." };
+
+  const redirectTo = `${window.location.origin}/reset-password`;
+  const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo });
+  if (error) {
+    const message = describeSupabaseError(error);
+    const friendly = /rate limit/i.test(message)
+      ? "Too many reset emails were requested. Wait a little and try again."
+      : message;
+    return { ok: false, error: friendly };
+  }
+  return { ok: true };
+}
+
+/**
  * Re-attach the staff session after a reload.
  *
  * supabase-js keeps the access token in storage, but the in-memory client is

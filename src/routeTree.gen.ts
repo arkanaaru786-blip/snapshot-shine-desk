@@ -39,6 +39,7 @@ import { Route as PartsRouteImport } from './routes/parts'
 import { Route as PartsLoginRouteImport } from './routes/parts-login'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundRouteImport } from './routes/refund'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RoadsideAssistanceRouteImport } from './routes/roadside-assistance'
 import { Route as RtoRouteImport } from './routes/rto'
 import { Route as ScrapRouteImport } from './routes/scrap'
@@ -233,6 +234,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const RefundRoute = RefundRouteImport.update({
   id: '/refund',
   path: '/refund',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RoadsideAssistanceRoute = RoadsideAssistanceRouteImport.update({
@@ -492,6 +498,7 @@ export interface FileRoutesByFullPath {
   '/parts-login': typeof PartsLoginRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/roadside-assistance': typeof RoadsideAssistanceRoute
   '/rto': typeof RtoRoute
   '/scrap': typeof ScrapRoute
@@ -568,6 +575,7 @@ export interface FileRoutesByTo {
   '/parts-login': typeof PartsLoginRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/roadside-assistance': typeof RoadsideAssistanceRoute
   '/rto': typeof RtoRoute
   '/scrap': typeof ScrapRoute
@@ -646,6 +654,7 @@ export interface FileRoutesById {
   '/parts-login': typeof PartsLoginRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/roadside-assistance': typeof RoadsideAssistanceRoute
   '/rto': typeof RtoRoute
   '/scrap': typeof ScrapRoute
@@ -725,6 +734,7 @@ export interface FileRouteTypes {
     | '/parts-login'
     | '/privacy'
     | '/refund'
+    | '/reset-password'
     | '/roadside-assistance'
     | '/rto'
     | '/scrap'
@@ -801,6 +811,7 @@ export interface FileRouteTypes {
     | '/parts-login'
     | '/privacy'
     | '/refund'
+    | '/reset-password'
     | '/roadside-assistance'
     | '/rto'
     | '/scrap'
@@ -878,6 +889,7 @@ export interface FileRouteTypes {
     | '/parts-login'
     | '/privacy'
     | '/refund'
+    | '/reset-password'
     | '/roadside-assistance'
     | '/rto'
     | '/scrap'
@@ -956,6 +968,7 @@ export interface RootRouteChildren {
   PartsLoginRoute: typeof PartsLoginRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundRoute: typeof RefundRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   RoadsideAssistanceRoute: typeof RoadsideAssistanceRoute
   RtoRoute: typeof RtoRoute
   ScrapRoute: typeof ScrapRoute
@@ -1201,6 +1214,13 @@ declare module '@tanstack/react-router' {
       path: '/refund'
       fullPath: '/refund'
       preLoaderRoute: typeof RefundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/roadside-assistance': {
@@ -1596,6 +1616,7 @@ const rootRouteChildren: RootRouteChildren = {
   PartsLoginRoute: PartsLoginRoute,
   PrivacyRoute: PrivacyRoute,
   RefundRoute: RefundRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   RoadsideAssistanceRoute: RoadsideAssistanceRoute,
   RtoRoute: RtoRoute,
   ScrapRoute: ScrapRoute,
