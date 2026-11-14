@@ -22,8 +22,6 @@ import { Route as DealerLoginRouteImport } from './routes/dealer-login'
 import { Route as DecorRouteImport } from './routes/decor'
 import { Route as DecorLoginRouteImport } from './routes/decor-login'
 import { Route as DecorPartnerRouteImport } from './routes/decor-partner'
-import { Route as DemoLoaderRouteImport } from './routes/demo-loader'
-import { Route as DemoLoader3dRouteImport } from './routes/demo-loader-3d'
 import { Route as DisclaimerRouteImport } from './routes/disclaimer'
 import { Route as EmployeeRouteImport } from './routes/employee'
 import { Route as EmployeeLoginRouteImport } from './routes/employee-login'
@@ -150,16 +148,6 @@ const DecorLoginRoute = DecorLoginRouteImport.update({
 const DecorPartnerRoute = DecorPartnerRouteImport.update({
   id: '/decor-partner',
   path: '/decor-partner',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoLoaderRoute = DemoLoaderRouteImport.update({
-  id: '/demo-loader',
-  path: '/demo-loader',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoLoader3dRoute = DemoLoader3dRouteImport.update({
-  id: '/demo-loader-3d',
-  path: '/demo-loader-3d',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DisclaimerRoute = DisclaimerRouteImport.update({
@@ -487,8 +475,6 @@ export interface FileRoutesByFullPath {
   '/decor': typeof DecorRoute
   '/decor-login': typeof DecorLoginRoute
   '/decor-partner': typeof DecorPartnerRoute
-  '/demo-loader': typeof DemoLoaderRoute
-  '/demo-loader-3d': typeof DemoLoader3dRoute
   '/disclaimer': typeof DisclaimerRoute
   '/employee': typeof EmployeeRoute
   '/employee-login': typeof EmployeeLoginRoute
@@ -566,8 +552,6 @@ export interface FileRoutesByTo {
   '/decor': typeof DecorRoute
   '/decor-login': typeof DecorLoginRoute
   '/decor-partner': typeof DecorPartnerRoute
-  '/demo-loader': typeof DemoLoaderRoute
-  '/demo-loader-3d': typeof DemoLoader3dRoute
   '/disclaimer': typeof DisclaimerRoute
   '/employee': typeof EmployeeRoute
   '/employee-login': typeof EmployeeLoginRoute
@@ -645,8 +629,6 @@ export interface FileRoutesById {
   '/decor': typeof DecorRoute
   '/decor-login': typeof DecorLoginRoute
   '/decor-partner': typeof DecorPartnerRoute
-  '/demo-loader': typeof DemoLoaderRoute
-  '/demo-loader-3d': typeof DemoLoader3dRoute
   '/disclaimer': typeof DisclaimerRoute
   '/employee': typeof EmployeeRoute
   '/employee-login': typeof EmployeeLoginRoute
@@ -726,8 +708,6 @@ export interface FileRouteTypes {
     | '/decor'
     | '/decor-login'
     | '/decor-partner'
-    | '/demo-loader'
-    | '/demo-loader-3d'
     | '/disclaimer'
     | '/employee'
     | '/employee-login'
@@ -805,8 +785,6 @@ export interface FileRouteTypes {
     | '/decor'
     | '/decor-login'
     | '/decor-partner'
-    | '/demo-loader'
-    | '/demo-loader-3d'
     | '/disclaimer'
     | '/employee'
     | '/employee-login'
@@ -883,8 +861,6 @@ export interface FileRouteTypes {
     | '/decor'
     | '/decor-login'
     | '/decor-partner'
-    | '/demo-loader'
-    | '/demo-loader-3d'
     | '/disclaimer'
     | '/employee'
     | '/employee-login'
@@ -963,8 +939,6 @@ export interface RootRouteChildren {
   DecorRoute: typeof DecorRoute
   DecorLoginRoute: typeof DecorLoginRoute
   DecorPartnerRoute: typeof DecorPartnerRoute
-  DemoLoaderRoute: typeof DemoLoaderRoute
-  DemoLoader3dRoute: typeof DemoLoader3dRoute
   DisclaimerRoute: typeof DisclaimerRoute
   EmployeeRoute: typeof EmployeeRoute
   EmployeeLoginRoute: typeof EmployeeLoginRoute
@@ -1108,20 +1082,6 @@ declare module '@tanstack/react-router' {
       path: '/decor-partner'
       fullPath: '/decor-partner'
       preLoaderRoute: typeof DecorPartnerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo-loader': {
-      id: '/demo-loader'
-      path: '/demo-loader'
-      fullPath: '/demo-loader'
-      preLoaderRoute: typeof DemoLoaderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo-loader-3d': {
-      id: '/demo-loader-3d'
-      path: '/demo-loader-3d'
-      fullPath: '/demo-loader-3d'
-      preLoaderRoute: typeof DemoLoader3dRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/disclaimer': {
@@ -1619,8 +1579,6 @@ const rootRouteChildren: RootRouteChildren = {
   DecorRoute: DecorRoute,
   DecorLoginRoute: DecorLoginRoute,
   DecorPartnerRoute: DecorPartnerRoute,
-  DemoLoaderRoute: DemoLoaderRoute,
-  DemoLoader3dRoute: DemoLoader3dRoute,
   DisclaimerRoute: DisclaimerRoute,
   EmployeeRoute: EmployeeRoute,
   EmployeeLoginRoute: EmployeeLoginRoute,

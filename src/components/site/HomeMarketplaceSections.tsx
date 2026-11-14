@@ -318,7 +318,7 @@ export function PopularVehicles() {
             <h2>
               Popular <span>Vehicles</span>
             </h2>
-            <p>Top picks from our marketplace · Demo listings</p>
+            <p>Top picks from our marketplace</p>
           </div>
           <Link to="/buy" search={{ category: "cars" }}>
             View all <ArrowRight size={14} />
@@ -338,7 +338,6 @@ export function PopularVehicles() {
                     height={450}
                     loading="lazy"
                   />
-                  <span className="home-demo-badge">Demo listing</span>
                   <button
                     type="button"
                     className="home-listing-fav"

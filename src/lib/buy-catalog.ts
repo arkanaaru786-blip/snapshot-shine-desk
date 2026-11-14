@@ -22,6 +22,7 @@ import tractorCategoryImage from "@/assets/homepage/Tractor.png";
 import taxiCategoryImage from "@/assets/homepage/Taxi.png";
 import { VEHICLES, placeholderFor } from "@/lib/cars-data";
 import { EXTRA_DEMO_CARS, EXTRA_DEMO_LISTINGS } from "@/lib/buy-demo-inventory";
+import { DEMO_CONTENT_ENABLED } from "@/lib/production";
 import { modelsForBrand, BRAND_NAMES } from "@/lib/vehicle-catalog";
 import { hasBrandLogo } from "@/components/buy/BrandArt";
 import {
@@ -267,11 +268,14 @@ const EXTRA_NON_CAR_LISTINGS: BuyListing[] = EXTRA_DEMO_LISTINGS.flatMap((l) => 
   ];
 });
 
-export const BUY_LISTINGS: BuyListing[] = [
-  ...CAR_LISTINGS,
-  ...NON_CAR_LISTINGS,
-  ...EXTRA_NON_CAR_LISTINGS,
-];
+/**
+ * What the marketplace shows. With demo content switched off the seeded
+ * inventory is not loaded at all, so every category starts empty until real
+ * listings are added.
+ */
+export const BUY_LISTINGS: BuyListing[] = DEMO_CONTENT_ENABLED
+  ? [...CAR_LISTINGS, ...NON_CAR_LISTINGS, ...EXTRA_NON_CAR_LISTINGS]
+  : [];
 
 export const listingsInCategory = (categoryId: BuyCategoryId) =>
   BUY_LISTINGS.filter((l) => l.categoryId === categoryId);

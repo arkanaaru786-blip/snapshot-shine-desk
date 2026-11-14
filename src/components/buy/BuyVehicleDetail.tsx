@@ -165,7 +165,6 @@ export function BuyVehicleDetail({ listing }: { listing: BuyListing }) {
                         <BadgeCheck size={12} aria-hidden="true" /> Verified
                       </span>
                     )}
-                    {listing.demo && <span className="buy-tag buy-tag--demo">Demo listing</span>}
                   </span>
                   <span className="buy-tag buy-tag--status buy-detail-status">
                     {listing.status}

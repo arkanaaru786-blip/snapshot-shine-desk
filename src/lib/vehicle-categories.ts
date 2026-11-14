@@ -4,6 +4,8 @@
  * category when the same vehicle is sold there too (e.g. Tata Ace is listed
  * under both SCV and Trucks). Cars live in vehicle-catalog.ts.
  */
+import { DEMO_CONTENT_ENABLED } from "@/lib/production";
+
 export type CategoryId =
   "bikes" | "three-wheelers" | "scv" | "trucks" | "buses" | "tractors" | "taxi";
 
@@ -353,8 +355,13 @@ const BASE_PRICE: Record<CategoryId, number> = {
   taxi: 5.2,
 };
 
-/** Deterministic demo listings — 6 per category, always valid Brand -> Model pairs. */
-export const CATEGORY_LISTINGS: CategoryListing[] = CATEGORIES.flatMap((c) => {
+/**
+ * Seeded listings — 6 per category, always valid Brand -> Model pairs.
+ * Switched off in production (see src/lib/production.ts): the marketplace
+ * starts empty and fills from real listings.
+ */
+export const CATEGORY_LISTINGS: CategoryListing[] = DEMO_CONTENT_ENABLED
+  ? CATEGORIES.flatMap((c) => {
   const pairs = Object.entries(c.catalog).flatMap(([b, es]) => es.map((e) => ({ b, e })));
   return Array.from({ length: 6 }, (_, i) => {
     const { b, e } = pairs[(i * 5) % pairs.length]!;
@@ -372,6 +379,7 @@ export const CATEGORY_LISTINGS: CategoryListing[] = CATEGORIES.flatMap((c) => {
       ownership: OWN[i % 2]!,
     };
   });
-});
+    })
+  : [];
 
 export const listingsFor = (id: CategoryId) => CATEGORY_LISTINGS.filter((l) => l.category === id);

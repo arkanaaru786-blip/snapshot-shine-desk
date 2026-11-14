@@ -22,7 +22,7 @@ export const Route = createFileRoute("/buy/vehicle/$id")({
     }
     const { listing } = loaderData;
     const title = `${buyListingName(listing)} — ${lakhLabel(listing.priceLakh)} | Motor Wallah`;
-    const description = `${buyListingName(listing)} in ${listing.city}: ${listing.fuel}, ${listing.year}${listing.kilometres !== null ? `, ${listing.kilometres.toLocaleString("en-IN")} km` : ""}. Demo catalogue listing — not confirmed inventory.`;
+    const description = `${buyListingName(listing)} in ${listing.city}: ${listing.fuel}, ${listing.year}${listing.kilometres !== null ? `, ${listing.kilometres.toLocaleString("en-IN")} km` : ""}.`;
     return {
       meta: [
         { title },

@@ -15,6 +15,7 @@
  * on it. That is why a Cars dealer can never see a Bike listing even by editing
  * the URL.
  */
+import { DEMO_CONTENT_ENABLED } from "@/lib/production";
 import {
   createPasswordCredential,
   cryptoAvailable,
@@ -53,9 +54,8 @@ export type Dealer = {
 
 const KEY = "mw_dealers_v1";
 const SEED_FLAG_KEY = "mw_dealers_seeded_v1";
-
-/** Password used by the seeded demo dealers; shown on the login page. */
-export const DEMO_DEALER_PASSWORD = "Dealer@2026";
+/** Only used by the (disabled) seed block below. */
+const SEED_DEALER_PASSWORD = "Dealer@2026";
 
 const listeners = new Set<() => void>();
 
@@ -174,6 +174,8 @@ let seeding: Promise<void> | null = null;
  * sign in as the Cars dealer and only Cars exists.
  */
 export function ensureDealers(): Promise<void> {
+  // Production: no seeded dealer accounts. Dealers are created by a super admin.
+  if (!DEMO_CONTENT_ENABLED) return Promise.resolve();
   if (typeof window === "undefined" || !cryptoAvailable()) return Promise.resolve();
   if (replicaRead<boolean>(SEED_FLAG_KEY, false)) return Promise.resolve();
   if (seeding) return seeding;
@@ -183,7 +185,7 @@ export function ensureDealers(): Promise<void> {
     if (existing.length === 0) {
       const created: Dealer[] = [];
       for (const seed of SEED_DEALERS) {
-        const credential = await createPasswordCredential(DEMO_DEALER_PASSWORD);
+        const credential = await createPasswordCredential(SEED_DEALER_PASSWORD);
         created.push({
           id: dealerLoginId(String(1001 + created.length)),
           name: seed.name,

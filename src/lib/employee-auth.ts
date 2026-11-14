@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from "react";
 
+import { DEMO_CONTENT_ENABLED } from "@/lib/production";
 import { ensureAdminDatabase, verifyEmployeeSignIn, type AdminEmployee } from "./admin-crm";
 import { type Actor, type Department, type Role } from "./admin-rbac";
 import { deskForEmployee, type DeskKey } from "./employee-desk";
@@ -215,8 +216,11 @@ export async function signInEmployee(
  * signs in with a password.
  */
 export function signInDemoDesk(employeeId: string): EmployeeSignInResult {
+  if (!DEMO_CONTENT_ENABLED) {
+    return { ok: false, error: "Desk previews are switched off. Sign in with a real employee password." };
+  }
   const employee = ensureAdminDatabase().employees.find((item) => item.id === employeeId);
-  if (!employee) return { ok: false, error: "That demo account no longer exists." };
+  if (!employee) return { ok: false, error: "That desk account no longer exists." };
   if (employee.credential) {
     return { ok: false, error: "This employee has a password. Sign in with it instead." };
   }
@@ -235,6 +239,7 @@ export function signOutEmployee(): void {
 
 /** Seeded employees with no password, offered as one-click desk previews. */
 export function demoDeskAccounts(): AdminEmployee[] {
+  if (!DEMO_CONTENT_ENABLED) return [];
   if (typeof window === "undefined") return [];
   return ensureAdminDatabase().employees.filter(
     (item) =>

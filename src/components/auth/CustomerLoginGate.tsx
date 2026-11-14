@@ -10,7 +10,7 @@ import {
   type CustomerGateRequest,
 } from "@/lib/customer-gate";
 import {
-  MOCK_OTP,
+  currentOtpCode,
   OTP_LENGTH,
   createAccount,
   maskMobile,
@@ -81,7 +81,7 @@ function CustomerLoginDialog({ request }: { request: CustomerGateRequest }) {
     setMobile(result.mobile);
     setCode("");
     setError(null);
-    setNotice(`Demo code ${MOCK_OTP} sent to ${maskMobile(result.mobile)}. No real SMS is sent.`);
+    setNotice(`Code ready for ${maskMobile(result.mobile)}. SMS delivery is not configured, so it is shown below.`);
     setStep("otp");
   };
 
@@ -196,8 +196,8 @@ function CustomerLoginDialog({ request }: { request: CustomerGateRequest }) {
               Send OTP <ArrowRight size={16} aria-hidden="true" />
             </button>
             <p className="mw-authdlg-note">
-              Demo login · the verification code is <strong>{MOCK_OTP}</strong>. Nothing is sent by
-              SMS and no password is needed.
+              SMS delivery is not configured yet, so the code appears here:{" "}
+              <strong>{currentOtpCode() ?? "----"}</strong>. No password is needed.
             </p>
           </form>
         )}
@@ -248,7 +248,7 @@ function CustomerLoginDialog({ request }: { request: CustomerGateRequest }) {
                 onClick={() => {
                   setCode("");
                   setError(null);
-                  setNotice(`Demo code ${MOCK_OTP} sent again to ${maskMobile(mobile)}.`);
+                  setNotice(`New code ready for ${maskMobile(mobile)}.`);
                 }}
               >
                 Resend code

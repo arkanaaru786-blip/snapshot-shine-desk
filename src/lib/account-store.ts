@@ -27,9 +27,27 @@ export type CustomerProfile = {
 const PROFILES_KEY = "mw_customer_profiles";
 const SESSION_KEY = "mw_customer_session";
 
-/** Demo verification code. Shown in the UI because no SMS is sent. */
-export const MOCK_OTP = "1234";
+/**
+ * Verification codes.
+ *
+ * No SMS provider is connected yet, so a fresh 4-digit code is generated for
+ * each request and shown on screen instead of being hard-coded. There is no
+ * fixed "1234" any more; the screen says delivery is not configured so nobody
+ * mistakes it for a real message.
+ */
 export const OTP_LENGTH = 4;
+
+let pendingOtp: string | null = null;
+
+/** The code currently waiting to be entered (null before "Send OTP"). */
+export const currentOtpCode = () => pendingOtp;
+
+const newCode = () => {
+  const digits = new Uint32Array(1);
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) crypto.getRandomValues(digits);
+  else return String(Math.floor(1000 + Math.random() * 9000));
+  return String(1000 + (digits[0]! % 9000));
+};
 
 const MOBILE_RE = /^[6-9]\d{9}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
@@ -166,9 +184,11 @@ export function currentCustomer(): CustomerProfile | null {
   return computeSnapshot().profile;
 }
 
-/** Mock OTP "send": validates the number and returns it normalised. */
+/** Validates the number and issues a fresh code (delivery is not configured). */
 export function sendOtp(raw: string): { ok: true; mobile: string } | { ok: false; error: string } {
-  return validateMobile(raw);
+  const result = validateMobile(raw);
+  if (result.ok) pendingOtp = newCode();
+  return result;
 }
 
 export function verifyOtp(code: string): { ok: true } | { ok: false; error: string } {
@@ -176,9 +196,10 @@ export function verifyOtp(code: string): { ok: true } | { ok: false; error: stri
   if (value.length !== OTP_LENGTH) {
     return { ok: false, error: `Enter the ${OTP_LENGTH}-digit code.` };
   }
-  if (value !== MOCK_OTP) {
-    return { ok: false, error: `That code does not match. This demo uses ${MOCK_OTP}.` };
+  if (!pendingOtp || value !== pendingOtp) {
+    return { ok: false, error: "That code is not correct. Request a new one." };
   }
+  pendingOtp = null;
   return { ok: true };
 }
 

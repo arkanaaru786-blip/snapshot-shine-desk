@@ -5,7 +5,6 @@ import { ArrowRight, KeyRound, ShieldCheck, Store } from "lucide-react";
 import { dealerCategoryLabel } from "@/lib/dealer-categories";
 import { currentDealer, signInDealer, useDealerSession } from "@/lib/dealer-session";
 import {
-  DEMO_DEALER_PASSWORD,
   ensureDealers,
   findDealerByMobile,
   listDealers,
@@ -13,7 +12,7 @@ import {
   type Dealer,
 } from "@/lib/dealers";
 import { dealerLoginId } from "@/lib/partner-ids";
-import { MOCK_OTP, OTP_LENGTH, maskMobile, validateMobile } from "@/lib/account-store";
+import { OTP_LENGTH, maskMobile, validateMobile } from "@/lib/account-store";
 
 export const Route = createFileRoute("/dealer-login")({
   beforeLoad: () => {
@@ -121,7 +120,7 @@ function DealerLoginRoute() {
     setResetCode("");
     setMode("forgot-otp");
     setNotice(
-      `Demo code ${MOCK_OTP} sent to ${maskMobile(validated.mobile)}. No SMS is sent in this build.`,
+      `A verification code is required for ${maskMobile(validated.mobile)}, but SMS delivery is not configured yet.`,
     );
   };
 
@@ -132,11 +131,10 @@ function DealerLoginRoute() {
       setError(`Enter the ${OTP_LENGTH}-digit code.`);
       return;
     }
-    if (digits !== MOCK_OTP) {
-      setError(`That code does not match. This demo uses ${MOCK_OTP}.`);
-      return;
-    }
-    setError(null);
+    // SMS delivery is not configured, so no code was ever sent: the reset
+    // cannot be completed from here and must go through an administrator.
+    setError("SMS delivery is not configured yet, so the reset code cannot be sent. Ask an administrator to reset the password.");
+    return;
     setNotice(null);
     setMode("forgot-reset");
   };
@@ -324,7 +322,7 @@ function DealerLoginRoute() {
                       Send OTP <ArrowRight size={14} />
                     </button>
                     <span className="mw-authforgot-note">
-                      Demo build · the code is <strong>{MOCK_OTP}</strong>.
+                      SMS delivery is not configured yet, so the code cannot be sent.
                     </span>
                   </div>
                 </form>
@@ -462,12 +460,12 @@ function DealerLoginRoute() {
         </div>
 
         <aside className="mw-dealer-login-aside">
-          <h2>{mode === "signin" ? "Demo partner logins" : "Need your partner ID?"}</h2>
+          <h2>{mode === "signin" ? "Partner accounts" : "Need your partner ID?"}</h2>
           {mode === "signin" ? (
             <>
               <p className="mw-dealer-demo-note">
-                One account per category, created for this mock setup. Click one to fill the form —
-                all use the password <code>{DEMO_DEALER_PASSWORD}</code>.
+                One account per category. Sign in with the partner ID and password Motor Wallah
+                issued to you.
               </p>
               <ul className="mw-dealer-demo-list">
                 {dealers.map((dealer) => (
@@ -476,7 +474,7 @@ function DealerLoginRoute() {
                       type="button"
                       onClick={() => {
                         setIdentity(dealerLoginId(dealer));
-                        setPassword(DEMO_DEALER_PASSWORD);
+                        setPassword("");
                         setError(null);
                       }}
                       data-testid={`dealer-demo-${dealer.category}`}
@@ -489,7 +487,7 @@ function DealerLoginRoute() {
                   </li>
                 ))}
                 {dealers.length === 0 ? (
-                  <li className="mw-dealer-demo-note">Preparing demo partner accounts…</li>
+                  <li className="mw-dealer-demo-note">No partner accounts yet — a super admin creates them in the control room.</li>
                 ) : null}
               </ul>
             </>

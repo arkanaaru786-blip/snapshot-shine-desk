@@ -1,159 +1,65 @@
 import { useSyncExternalStore } from "react";
 
-import { replicaRead, replicaWrite } from "@/lib/cloud-store";
-import {
-  createPasswordCredential,
-  cryptoAvailable,
-  safeEqual,
-  sha256Hex,
-  validatePasswordStrength,
-  verifyPasswordCredential,
-} from "./admin-crypto";
-import { verifyEmployeeSignIn } from "./admin-crm";
 import { ROLES, ROLE_LABEL, type Department, type Role } from "./admin-rbac";
 import {
   currentStaff,
   restoreStaffSession,
   staffClient,
+  staffSession,
   staffSignIn,
   staffSignOut,
-  type StaffState,
 } from "./staff-auth";
 
 /**
- * Master Admin authentication.
+ * Master Admin authentication — Supabase only.
  *
- * There is no server in this project, so the admin gate is a real, working
- * email + password check on the device, built on the same storage patterns as
- * the customer session in `account-store.ts`.
+ * There is no device-local password anywhere in this file. A panel login is a
+ * real `supabase.auth.signInWithPassword()` call, and the person is only let in
+ * when their user id is listed in `public.staff` (checked through `is_staff()`).
+ * The role shown in the panel comes from that same row, so permissions are
+ * decided by the database rather than by a browser credential.
  *
- * Where the password lives (never in the source):
- *   1. Environment — VITE_MASTER_ADMIN_EMAIL + VITE_MASTER_ADMIN_PASSWORD_HASH
- *      (SHA-256 of the password). This is the production path: set both in the
- *      deploy environment and no credential ever touches the repository.
- *   2. The admin database — an account enrolled through the first-run setup
- *      screen, stored as a salted PBKDF2-SHA256 hash (150k iterations). The
- *      plaintext password is never written anywhere.
- *
- * Employees sign in with the work email and temporary password set for them in
- * the directory; their session carries the employee id, role and department,
- * which is what the RBAC policy in `admin-rbac.ts` checks on every write.
- *
- * Honest limitation: this is a browser-side gate. It keeps the control room
- * behind a credential and out of the public nav, but it is not a substitute for
- * server-side authorization once the panel manages data other people can read.
+ * What is cached on the device is only the *result* of that sign-in — a small
+ * copy of the staff identity, so the route guards (`beforeLoad`) can answer
+ * synchronously during hydration. It grants nothing on its own: every read and
+ * write is authorised by the Supabase JWT that `staff-auth.ts` keeps and
+ * refreshes.
  */
 
-const ACCOUNTS_KEY = "mw_admin_accounts";
 const SESSION_KEY = "mw_admin_session";
 
-/** A signed-in admin is asked to sign in again after 8 hours or 30 idle minutes. */
+/** A panel session ends after 8 hours or 30 idle minutes, like the token. */
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 const IDLE_TTL_MS = 30 * 60 * 1000;
 
-const MAX_ATTEMPTS = 5;
-const LOCK_MS = 60_000;
-
-export type AdminAccount = {
-  email: string;
-  name: string;
-  role: Role;
-  /** base64 PBKDF2 salt */
-  salt: string;
-  /** base64 PBKDF2-SHA256 derived key */
-  hash: string;
-  iterations: number;
-  createdAt: string;
-  lastLoginAt: string | null;
-};
-
 export type AdminSession = {
-  /** Employee id (EMP-1001) or OWNER-1 for the owner credential. */
+  /** Supabase auth user id — this is what `public.staff.user_id` must contain. */
   employeeId: string;
   email: string;
   name: string;
   role: Role;
   /** null only for a super admin, who works across every desk. */
   department: Department | null;
-  /** Where the credential that signed this session in came from. */
-  source: "environment" | "database" | "employee";
-  /**
-   * State of the Supabase session behind this sign-in. The panel's own password
-   * check is device-local; privileged database work (site settings, banners,
-   * Storage uploads) needs a real Supabase Auth user carrying `is_staff()`.
-   * `undefined` means an older session written before this was tracked.
-   */
-  database?: DatabaseLink;
+  /** Always the database now; kept so older call sites still read it. */
+  source: "database";
+  /** Whether the staff check passed for this session. */
+  database?: "staff" | "not-staff" | "unverified";
   issuedAt: string;
   lastSeenAt: number;
   expiresAt: number;
 };
 
-/**
- * - staff: Supabase issued a token for this email and `is_staff()` is true.
- * - not-staff: Supabase refused the password, or the user is not on the
- *   allow-list — every privileged write will be rejected with 42501.
- * - unverified: no database in this build, or the check has not run yet.
- */
-export type DatabaseLink = "staff" | "not-staff" | "unverified";
-
 export type AdminAuthSnapshot = {
   /** false during SSR / hydration, before the stored session is read. */
   ready: boolean;
   session: AdminSession | null;
-  /** true when no administrator exists yet — the panel offers first-run setup. */
+  /** Always false: there is no first-run setup any more. */
   needsSetup: boolean;
 };
 
 const SIGNED_OUT: AdminAuthSnapshot = { ready: false, session: null, needsSetup: false };
 
-/* ------------------------------------------------------------------ env */
-
-type EnvCredential = { email: string; passwordHash: string | null; password: string | null };
-
-function readEnvCredential(): EnvCredential | null {
-  const email = (import.meta.env["VITE_MASTER_ADMIN_EMAIL"] ?? "").trim().toLowerCase();
-  if (!email) return null;
-  const hash = (import.meta.env["VITE_MASTER_ADMIN_PASSWORD_HASH"] ?? "").trim();
-  const password = import.meta.env["VITE_MASTER_ADMIN_PASSWORD"] ?? "";
-  if (!hash && !password) return null;
-  return {
-    email,
-    passwordHash: hash ? normalizeHexHash(hash) : null,
-    password: password ? password : null,
-  };
-}
-
-function normalizeHexHash(value: string): string {
-  const raw = value
-    .toLowerCase()
-    .replace(/^sha256:/, "")
-    .trim();
-  return raw;
-}
-
 /* --------------------------------------------------------------- storage */
-
-/**
- * The account directory lives in Supabase (cloud-store). The signed-in session
- * (`mw_admin_session`) and the failed-attempt counter (`mw_admin_attempts`)
- * deliberately stay device-local: a session should not be replicated, and a
- * lockout counter that syncs would let one device lock out every other one.
- */
-function readAccounts(): Record<string, AdminAccount> {
-  const parsed = replicaRead<unknown>(ACCOUNTS_KEY, {});
-  if (!parsed || typeof parsed !== "object") return {};
-  // Phase 1 accounts carried role "owner"; they are super admins now.
-  const accounts = parsed as Record<string, AdminAccount & { role: string }>;
-  for (const account of Object.values(accounts)) {
-    if (!ROLES.includes(account.role as Role)) account.role = "super_admin";
-  }
-  return accounts as Record<string, AdminAccount>;
-}
-
-function writeAccounts(accounts: Record<string, AdminAccount>): boolean {
-  return replicaWrite(ACCOUNTS_KEY, accounts);
-}
 
 function readSession(): AdminSession | null {
   if (typeof window === "undefined") return null;
@@ -162,8 +68,6 @@ function readSession(): AdminSession | null {
       window.localStorage.getItem(SESSION_KEY) ?? "null",
     ) as AdminSession | null;
     if (!parsed || typeof parsed !== "object" || typeof parsed.email !== "string") return null;
-    // Sessions written before RBAC existed have no employee id or valid role,
-    // so they are dropped and the person signs in again.
     if (typeof parsed.employeeId !== "string") return null;
     if (!ROLES.includes(parsed.role as Role)) return null;
     return parsed;
@@ -182,72 +86,14 @@ function writeSession(session: AdminSession | null): boolean {
   }
 }
 
-/* ------------------------------------------------------------- attempts */
-
-type AttemptRecord = { failed: number; lockedUntil: number };
-const ATTEMPTS_KEY = "mw_admin_attempts";
-
-function readAttempts(): Record<string, AttemptRecord> {
-  if (typeof window === "undefined") return {};
-  try {
-    return JSON.parse(window.localStorage.getItem(ATTEMPTS_KEY) ?? "{}") as Record<
-      string,
-      AttemptRecord
-    >;
-  } catch {
-    return {};
-  }
-}
-
-function registerFailure(email: string): { locked: boolean; remaining: number } {
-  const all = readAttempts();
-  const current = all[email] ?? { failed: 0, lockedUntil: 0 };
-  const failed = current.failed + 1;
-  const locked = failed >= MAX_ATTEMPTS;
-  all[email] = locked
-    ? { failed: 0, lockedUntil: Date.now() + LOCK_MS }
-    : { failed, lockedUntil: 0 };
-  try {
-    window.localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(all));
-  } catch {
-    /* attempt tracking is best-effort */
-  }
-  return { locked, remaining: Math.max(0, MAX_ATTEMPTS - failed) };
-}
-
-function clearFailures(email: string) {
-  const all = readAttempts();
-  if (!(email in all)) return;
-  delete all[email];
-  try {
-    window.localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(all));
-  } catch {
-    /* ignore */
-  }
-}
-
 /* ------------------------------------------------------------- snapshots */
-
-function computeSnapshot(): AdminAuthSnapshot {
-  const session = readSession();
-  const env = readEnvCredential();
-  const accounts = Object.keys(readAccounts()).length > 0;
-  return {
-    ready: true,
-    session: session && !isExpired(session) ? touchIdle(session) : null,
-    needsSetup: !env && !accounts,
-  };
-}
 
 function isExpired(session: AdminSession): boolean {
   const now = Date.now();
   return now >= session.expiresAt || now - session.lastSeenAt > IDLE_TTL_MS;
 }
 
-/**
- * Keeps the idle timer alive while the panel is in use without writing on every
- * event — the timestamp is refreshed in storage at most once a minute.
- */
+/** Keeps the idle timer alive without writing on every render. */
 function touchIdle(session: AdminSession): AdminSession {
   const now = Date.now();
   if (now - session.lastSeenAt < 60_000) return session;
@@ -256,11 +102,18 @@ function touchIdle(session: AdminSession): AdminSession {
   return next;
 }
 
+function computeSnapshot(): AdminAuthSnapshot {
+  const session = readSession();
+  return {
+    ready: true,
+    session: session && !isExpired(session) ? touchIdle(session) : null,
+    needsSetup: false,
+  };
+}
+
 let snapshot: AdminAuthSnapshot = SIGNED_OUT;
 if (typeof window !== "undefined") {
   snapshot = computeSnapshot();
-  // Re-attach the Supabase session of a panel login that survived a reload, so
-  // uploads and settings writes keep their staff token after the token refreshes.
   if (snapshot.session) void syncDatabaseSession();
 }
 
@@ -274,7 +127,7 @@ function emit() {
 const subscribe = (listener: () => void) => {
   listeners.add(listener);
   const onStorage = (event: StorageEvent) => {
-    if (!event.key || event.key === SESSION_KEY || event.key === ACCOUNTS_KEY) emit();
+    if (!event.key || event.key === SESSION_KEY) emit();
   };
   window.addEventListener("storage", onStorage);
   return () => {
@@ -286,7 +139,6 @@ const subscribe = (listener: () => void) => {
 const getSnapshot = () => snapshot;
 const getServerSnapshot = (): AdminAuthSnapshot => SIGNED_OUT;
 
-/** Missing-session status for route guards, which run before React renders. */
 function noopSubscribe() {
   return () => {};
 }
@@ -307,60 +159,40 @@ export function useAdminReady() {
 /* ------------------------------------------------------- database session */
 
 /**
- * Sign the same person into Supabase Auth so every request from the panel
- * carries a staff JWT.
+ * Re-check the Supabase session behind a cached panel session.
  *
- * The panel password is verified on the device first, so a wrong password never
- * reaches the network. When Supabase has a user with the same email and
- * password, this stores a session under `mw_staff_auth`; supabase-js then sends
- * `Authorization: Bearer …` on table reads, RPC calls and Storage uploads, which
- * is what `is_staff()` checks.
+ * If the token is gone, expired beyond refresh, or the person is no longer in
+ * `public.staff`, the panel session is dropped and they sign in again. The
+ * password is never re-asked for.
  */
-async function linkDatabase(email: string, password: string): Promise<DatabaseLink> {
-  if (typeof window === "undefined" || !staffClient()) return "unverified";
-  try {
-    const already = await currentStaff();
-    if (already && already.email.toLowerCase() === email) {
-      return already.isStaff ? "staff" : "not-staff";
-    }
-    const result = await staffSignIn(email, password);
-    if (!result.ok) return "not-staff";
-    return result.isStaff ? "staff" : "not-staff";
-  } catch {
-    return "unverified";
-  }
-}
-
-function applyDatabaseLink(session: AdminSession, database: DatabaseLink): AdminSession {
-  const next: AdminSession = { ...session, database };
-  writeSession(next);
-  emit();
-  return next;
-}
-
-/**
- * Re-check the Supabase side of an existing panel session — on boot, and after a
- * token refresh. It never asks for the password again: the linked Supabase
- * session is restored from its own storage key.
- */
-export async function syncDatabaseSession(): Promise<DatabaseLink> {
+export async function syncDatabaseSession(): Promise<"staff" | "not-staff" | "unverified"> {
   const session = readSession();
   if (!session || typeof window === "undefined") return "unverified";
   if (!staffClient()) return "unverified";
-  let state: StaffState | null = null;
+
+  let staff = null;
   try {
-    state = await restoreStaffSession();
+    staff = await restoreStaffSession();
   } catch {
-    state = null;
+    staff = null;
   }
-  const database: DatabaseLink = state?.isStaff ? "staff" : "not-staff";
-  if (session.database !== database) applyDatabaseLink(session, database);
+
+  const database = staff?.isStaff ? "staff" : "not-staff";
+  if (database === "not-staff") {
+    writeSession(null);
+    emit();
+    return database;
+  }
+  if (session.database !== database) {
+    writeSession({ ...session, database });
+    emit();
+  }
   return database;
 }
 
 /* ------------------------------------------------------------------- API */
 
-/** Synchronous guard read — returns null when absent, expired or idle. */
+/** Synchronous guard read — null when absent, expired or idle. */
 export function currentAdmin(): AdminSession | null {
   const session = readSession();
   if (!session) return null;
@@ -371,226 +203,108 @@ export function currentAdmin(): AdminSession | null {
   return session;
 }
 
+/** Kept for older call sites: there is no first-run setup any more. */
 export function adminNeedsSetup(): boolean {
-  return !readEnvCredential() && Object.keys(readAccounts()).length === 0;
-}
-
-export function envAdminEmail(): string | null {
-  return readEnvCredential()?.email ?? null;
+  return false;
 }
 
 export type SignInResult = { ok: true; session: AdminSession } | { ok: false; error: string };
 
-export async function signInAdmin(emailInput: string, password: string): Promise<SignInResult> {
-  const email = emailInput.trim().toLowerCase();
-  if (!email) return { ok: false, error: "Enter your administrator email." };
-  if (!password) return { ok: false, error: "Enter your password." };
+const asRole = (value: unknown): Role | null =>
+  typeof value === "string" && ROLES.includes(value as Role) ? (value as Role) : null;
 
-  const attempts = readAttempts()[email];
-  if (attempts && attempts.lockedUntil > Date.now()) {
-    const seconds = Math.ceil((attempts.lockedUntil - Date.now()) / 1000);
-    return { ok: false, error: `Too many failed attempts. Try again in ${seconds}s.` };
-  }
-
-  if (!cryptoAvailable()) {
-    return {
-      ok: false,
-      error: "This browser cannot verify a password securely. Try another browser.",
-    };
-  }
-
-  const env = readEnvCredential();
-  let verified: SignInResult | null = null;
-
-  // 1. The deployment's own credential — always a super admin.
-  if (env && env.email === email) {
-    const matchesHash = env.passwordHash
-      ? safeEqual(await sha256Hex(password), env.passwordHash)
-      : false;
-    const matchesPlain = env.password ? safeEqual(password, env.password) : false;
-    if (matchesHash || matchesPlain) {
-      verified = {
-        ok: true,
-        session: await startSession({
-          employeeId: "OWNER-1",
-          email,
-          name: splitName(email, "Administrator"),
-          role: "super_admin",
-          department: null,
-          source: "environment",
-        }),
-      };
-    }
-  }
-
-  // 2. An owner account enrolled in the admin database on first run.
-  if (!verified) {
-    const account = readAccounts()[email];
-    if (account) {
-      const matches = await verifyPasswordCredential(password, {
-        salt: account.salt,
-        hash: account.hash,
-        iterations: account.iterations,
-      });
-      if (matches) {
-        const accounts = readAccounts();
-        accounts[email] = { ...account, lastLoginAt: new Date().toISOString() };
-        writeAccounts(accounts);
-        verified = {
-          ok: true,
-          session: await startSession({
-            employeeId: "OWNER-1",
-            email: account.email,
-            name: account.name,
-            role: account.role,
-            department: null,
-            source: "database",
-          }),
-        };
-      }
-    }
-  }
-
-  // 3. An employee from the directory, with the role and desk on their record.
-  if (!verified) {
-    const staff = await verifyEmployeeSignIn(email, password);
-    if (staff.ok) {
-      verified = {
-        ok: true,
-        session: await startSession({
-          employeeId: staff.employee.id,
-          email: staff.employee.email,
-          name: staff.employee.name,
-          role: staff.employee.role,
-          department: staff.employee.department,
-          source: "employee",
-        }),
-      };
-    }
-  }
-
-  if (!verified) {
-    const result = registerFailure(email);
-    return {
-      ok: false,
-      error: result.locked
-        ? `Too many failed attempts. Locked for ${Math.round(LOCK_MS / 1000)}s.`
-        : `Email or password is incorrect. ${result.remaining} attempt${
-            result.remaining === 1 ? "" : "s"
-          } left.`,
-    };
-  }
-
-  if (!verified.ok) return verified;
-  clearFailures(email);
-  // A device-local password is not enough for privileged writes: link the same
-  // credentials to Supabase so the panel's requests carry a staff token.
-  const database = await linkDatabase(email, password);
-  return { ok: true, session: applyDatabaseLink(verified.session, database) };
-}
-
-async function startSession(
-  identity: Omit<AdminSession, "issuedAt" | "lastSeenAt" | "expiresAt">,
-): Promise<AdminSession> {
-  const now = Date.now();
-  const session: AdminSession = {
-    ...identity,
-    issuedAt: new Date(now).toISOString(),
-    lastSeenAt: now,
-    expiresAt: now + SESSION_TTL_MS,
-  };
-  writeSession(session);
-  emit();
-  return session;
-}
-
-function splitName(email: string, fallback: string): string {
+const displayName = (email: string) => {
   const local = email.split("@")[0] ?? "";
   const words = local
     .split(/[._-]+/)
     .filter(Boolean)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1));
-  return words.length ? words.join(" ") : fallback;
+  return words.join(" ") || email;
+};
+
+/**
+ * Sign in with the email and password of a Supabase user that is listed in
+ * `public.staff`. Nothing else is accepted — no device credential, no
+ * environment password, no demo account.
+ */
+export async function signInAdmin(emailInput: string, password: string): Promise<SignInResult> {
+  const email = emailInput.trim().toLowerCase();
+  if (!email) return { ok: false, error: "Enter your email address." };
+  if (!password) return { ok: false, error: "Enter your password." };
+
+  const client = staffClient();
+  if (!client) {
+    return { ok: false, error: "The database is not configured for this build." };
+  }
+
+  const signIn = await staffSignIn(email, password);
+  if (!signIn.ok) {
+    return { ok: false, error: signIn.error ?? "That email and password were not accepted." };
+  }
+
+  const staff = await currentStaff();
+  if (!staff) {
+    void staffSignOut();
+    return { ok: false, error: "Supabase accepted the password but returned no session. Try again." };
+  }
+  if (!staff.isStaff) {
+    void staffSignOut();
+    return {
+      ok: false,
+      error:
+        staff.checked === "none"
+          ? `Signed in, but the staff check could not run: ${staff.error ?? "unknown error"}. Run supabase/schema.sql, then try again.`
+          : `This account (user id ${staff.userId}) is not in public.staff, so it cannot open the control room. Add that user id with role 'super_admin'.`,
+    };
+  }
+
+  // The role comes from the staff row, which is the single source of truth.
+  let role: Role = "super_admin";
+  try {
+    const { data } = await client
+      .from("staff")
+      .select("role")
+      .eq("user_id", staff.userId)
+      .maybeSingle();
+    role = asRole((data as { role?: string } | null)?.role) ?? "super_admin";
+  } catch {
+    role = "super_admin";
+  }
+
+  const session = await staffSession();
+  const now = Date.now();
+  const panelSession: AdminSession = {
+    employeeId: staff.userId,
+    email: staff.email || email,
+    name: displayName(staff.email || email),
+    role,
+    department: null,
+    source: "database",
+    database: "staff",
+    issuedAt: new Date(now).toISOString(),
+    lastSeenAt: now,
+    expiresAt: Math.min(
+      now + SESSION_TTL_MS,
+      session?.expiresAt && session.expiresAt > now ? session.expiresAt : now + SESSION_TTL_MS,
+    ),
+  };
+
+  writeSession(panelSession);
+  emit();
+  return { ok: true, session: panelSession };
 }
 
 export function signOutAdmin() {
   writeSession(null);
   emit();
-  // Drop the linked Supabase session too, so the next person on this browser
-  // cannot reuse its staff token.
+  // Drop the Supabase session too, so the next person on this browser cannot
+  // reuse its staff token.
   void staffSignOut();
-}
-
-/* ------------------------------------------------------- first-run setup */
-
-export function validateNewPassword(password: string, confirm: string): string | null {
-  const weak = validatePasswordStrength(password);
-  if (weak) return weak;
-  if (password !== confirm) return "Both passwords must match.";
-  return null;
-}
-
-export async function enrollAdmin(input: {
-  email: string;
-  name: string;
-  password: string;
-  role?: Role;
-}): Promise<SignInResult> {
-  if (!cryptoAvailable()) {
-    return { ok: false, error: "This browser cannot store a password securely." };
-  }
-  if (readEnvCredential()) {
-    return {
-      ok: false,
-      error:
-        "Administrator sign-in is managed by the deployment environment. Use those credentials.",
-    };
-  }
-  const email = input.email.trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email)) {
-    return { ok: false, error: "Enter a valid email address." };
-  }
-  const name = input.name.trim().replace(/\s+/g, " ");
-  if (name.length < 2) return { ok: false, error: "Enter the administrator name." };
-
-  const accounts = readAccounts();
-  if (accounts[email])
-    return { ok: false, error: "An administrator with that email already exists." };
-
-  const credential = await createPasswordCredential(input.password);
-  const account: AdminAccount = {
-    email,
-    name,
-    role: input.role ?? "super_admin",
-    salt: credential.salt,
-    hash: credential.hash,
-    iterations: credential.iterations,
-    createdAt: new Date().toISOString(),
-    lastLoginAt: new Date().toISOString(),
-  };
-  accounts[email] = account;
-  if (!writeAccounts(accounts)) {
-    return { ok: false, error: "This browser blocked storage, so the account could not be saved." };
-  }
-  const session = await startSession({
-    employeeId: "OWNER-1",
-    email,
-    name,
-    role: account.role,
-    department: null,
-    source: "database",
-  });
-  // Same credentials, same bridge as a normal sign-in: if Supabase has this
-  // person as a staff user, the panel's writes carry a staff token from now on.
-  const database = await linkDatabase(email, input.password);
-  return { ok: true, session: applyDatabaseLink(session, database) };
 }
 
 /** Human labels for the credential source shown in the panel footer. */
 export const ADMIN_SOURCE_LABEL: Record<AdminSession["source"], string> = {
-  environment: "Environment credential",
-  database: "Owner account",
-  employee: "Employee directory",
+  database: "Supabase staff account",
 };
 
 /** Human label for the signed-in role, used in the shell header. */

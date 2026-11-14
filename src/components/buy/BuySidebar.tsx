@@ -346,7 +346,7 @@ export function BuyVehicleSidebar({
         </div>
         {transmissions.length === 0 && (
           <p className="mw-side-hint">
-            Transmission is not recorded for these demo listings, so the filter stays off instead of
+            Transmission is not recorded for these listings, so the filter stays off instead of
             offering choices that do nothing.
           </p>
         )}

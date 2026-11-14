@@ -362,7 +362,7 @@ function BuyPage() {
                   service={service}
                   countLabel={countLabel(
                     serviceListingsInCategory(service.id).length,
-                    "demo listing",
+                    "listing",
                   )}
                   filters={serviceFilters}
                   options={serviceOptions}
@@ -504,7 +504,7 @@ function BuyPage() {
                         <p className="mw-empty-text">
                           No listing in this category has a completed Motor Wallah inspection yet,
                           so nothing can honestly be shown as verified. Clear the verified filter to
-                          see demo listings.
+                          see our listings.
                         </p>
                       ) : shortlistedOnly ? (
                         <p className="mw-empty-text">
@@ -514,14 +514,14 @@ function BuyPage() {
                       ) : filters.brand &&
                         !brands.some((b) => b.brand === filters.brand && b.count > 0) ? (
                         <p className="mw-empty-text">
-                          There are no {category.label.toLowerCase()} demo listings for{" "}
+                          There are no {category.label.toLowerCase()} listings for{" "}
                           {filters.brand} right now — clear the brand filter to see the other brands
                           in this category.
                         </p>
                       ) : filters.model ? (
                         <p className="mw-empty-text">
                           The selected model ({filters.model}) includes discontinued names from the
-                          catalogue, and none has a live demo listing right now — pick another model
+                          catalogue, and none has a live listing right now — pick another model
                           or clear the filters.
                         </p>
                       ) : (

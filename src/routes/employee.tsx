@@ -82,7 +82,6 @@ function EmployeeDashboard() {
               <strong>{session.name}</strong>
               <small>
                 {session.employeeId} · {ROLE_LABEL[session.role]}
-                {session.demo ? " · Demo" : ""}
               </small>
             </div>
             <button

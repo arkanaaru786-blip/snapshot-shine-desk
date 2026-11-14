@@ -4,8 +4,8 @@ import { ArrowRight, BadgeCheck, LogOut, ShieldCheck, Smartphone } from "lucide-
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import {
-  MOCK_OTP,
   OTP_LENGTH,
+  currentOtpCode,
   createAccount,
   maskMobile,
   profileFor,
@@ -66,7 +66,7 @@ function LoginPage() {
     setMobile(result.mobile);
     setCode("");
     setError(null);
-    setNotice(`Demo code ${MOCK_OTP} sent to ${maskMobile(result.mobile)}. No real SMS is sent.`);
+    setNotice(`Code ready for ${maskMobile(result.mobile)}. SMS delivery is not configured, so it is shown below.`);
     setStep("otp");
   };
 
@@ -223,7 +223,7 @@ function LoginPage() {
                       Send OTP <ArrowRight size={16} aria-hidden="true" />
                     </button>
                     <p className="mw-acct-demo" data-testid="demo-otp">
-                      Demo login · the verification code is <strong>{MOCK_OTP}</strong>
+                      SMS delivery is not configured yet · code <strong>{currentOtpCode() ?? "----"}</strong>
                     </p>
                   </form>
                 )}
@@ -272,7 +272,7 @@ function LoginPage() {
                         onClick={() => {
                           setCode("");
                           setError(null);
-                          setNotice(`Demo code ${MOCK_OTP} sent again to ${maskMobile(mobile)}.`);
+                          setNotice(`New code ready for ${maskMobile(mobile)}.`);
                         }}
                       >
                         Resend code

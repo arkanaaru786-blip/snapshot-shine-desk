@@ -103,7 +103,7 @@ export function BuyHub({
                 >
                   <span className="mw-hub-media mw-hub-media--icon">
                     <Icon size={34} strokeWidth={1.6} aria-hidden="true" />
-                    <span className="mw-hub-count">Demo listings</span>
+                    <span className="mw-hub-count">Listings</span>
                   </span>
                   <span className="mw-hub-body">
                     <span className="mw-hub-name">{service.label}</span>
